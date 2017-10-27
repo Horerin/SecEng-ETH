@@ -1,0 +1,56 @@
+enum Role {
+    STUDENT
+    TA
+    PROFESSOR
+    ADMINISTRATOR
+}
+
+entity User {
+    String name
+    String surname
+    String username
+    String password
+    Role personalRole
+    Department department 
+        oppositeTo users
+    Set(Course) enrolledCourses
+        oppositeTo students
+    Set(Course) taughtCourses
+        oppositeTo courseStaff
+    Set(Course) administredCourses
+        oppositeTo administrator
+    Set(Grade) studentGrades
+        oppositeTo student
+}
+
+entity Department {
+    String name
+    Set(Course) offeredCourses
+        oppositeTo courseDepartment
+    Set(User) users
+        oppositeTo department
+}
+
+entity Course {
+    String name
+    Integer studentLimit
+    Department courseDepartment
+        oppositeTo offeredCourses
+    Set(User) students
+        oppositeTo enrolledCourses
+    Set(User) courseStaff
+        oppositeTo taughtCourses
+    User administrator
+        oppositeTo administredCourses   
+    Set(Grade) courseGrades
+        oppositeTo course
+}
+
+entity Grade {
+    Integer personalGrade
+    Boolean isFinal
+    User student
+        oppositeTo studentGrades
+    Course course
+        oppositeTo courseGrades
+}
