@@ -20,8 +20,8 @@
                 <version>2.5</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <role-enum><!--Insert the role enum here--></role-enum>
-                    <user-entity><!-- Insert the user entity here --></user-entity>
+                    <role-enum>Role</role-enum>
+                    <user-entity>User</user-entity>
                 </configuration>
             </plugin>
         </plugins>
