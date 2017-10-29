@@ -41,7 +41,7 @@ entity Course {
     Set(User) isTaughtByTA
         oppositeTo asTATeachingCourse
     User isAdministeredByProfessor
-        oppositeTo +asProfessorAdministeringCourse   
+        oppositeTo asProfessorAdministeringCourse   
     Set(Grade) courseGrade
         oppositeTo gradeOfCourse
 }
