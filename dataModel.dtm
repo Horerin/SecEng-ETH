@@ -11,46 +11,46 @@ entity User {
     String username
     String password
     Role personalRole
-    Department department 
-        oppositeTo users
-    Set(Course) enrolledCourses
-        oppositeTo students
-    Set(Course) taughtCourses
-        oppositeTo courseStaff
-    Set(Course) administredCourses
-        oppositeTo administrator
-    Set(Grade) studentGrades
-        oppositeTo student
+    Department affiliatedWithDepartment 
+        oppositeTo departmentHavingAffiliation
+    Set(Course) asStudentAttendingCourse
+        oppositeTo isAttendedByStudent
+    Set(Course) asTATeachingCourse
+        oppositeTo isTaughtByTa
+    Set(Course) asProfessorAdministeringCourse
+        oppositeTo isAdministeredByProfessor
+    Set(Grade) asStudentHavingGrade
+        oppositeTo gradeOfStudent
 }
 
 entity Department {
     String name
-    Set(Course) offeredCourses
-        oppositeTo courseDepartment
-    Set(User) users
-        oppositeTo department
+    Set(Course) offersCourse
+        oppositeTo offeredByDepartment
+    Set(User) departmentHavingAffiliation
+        oppositeTo affiliatedWithDepartment
 }
 
 entity Course {
     String name
     Integer studentLimit
-    Department courseDepartment
-        oppositeTo offeredCourses
-    Set(User) students
-        oppositeTo enrolledCourses
-    Set(User) courseStaff
-        oppositeTo taughtCourses
-    User administrator
-        oppositeTo administredCourses   
-    Set(Grade) courseGrades
-        oppositeTo course
+    Department offeredByDepartment
+        oppositeTo offersCourse
+    Set(User) isAttendedByStudent
+        oppositeTo asStudentAttendingCourse
+    Set(User) isTaughtByTA
+        oppositeTo asTATeachingCourse
+    User isAdministeredByProfessor
+        oppositeTo +asProfessorAdministeringCourse   
+    Set(Grade) courseGrade
+        oppositeTo gradeOfCourse
 }
 
 entity Grade {
     Integer personalGrade
     Boolean isFinal
-    User student
-        oppositeTo studentGrades
-    Course course
-        oppositeTo courseGrades
+    User gradeOfStudent
+        oppositeTo asStudentHavingGrade
+    Course gradeOfCourse
+        oppositeTo courseGrade
 }
