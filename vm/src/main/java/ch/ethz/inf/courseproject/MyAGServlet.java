@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.modelinglab.uniorg;
+package ch.ethz.inf.courseproject;
 
 import com.meaningfulmodels.actiongui.jasfag.Window;
 import com.meaningfulmodels.actiongui.vm.core.AGSession;

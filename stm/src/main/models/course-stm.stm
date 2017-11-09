@@ -1,0 +1,104 @@
+
+role STUDENT {
+    Person{
+         fullAccess
+    }
+    Course{
+        fullAccess
+    }
+    Department{
+        fullAccess
+    }
+    FinalGrade{
+        fullAccess
+    }
+    ProvisionalGrade{
+        fullAccess
+    }
+    TeachRequest{
+        fullAccess        
+    }
+}
+role STAFF {
+    Person{
+        fullAccess
+    }
+    Course{
+        fullAccess
+    }
+    Department{
+        fullAccess
+    }
+    FinalGrade{
+        fullAccess
+    }
+    ProvisionalGrade{
+        fullAccess
+    }
+    TeachRequest{
+        fullAccess        
+    }
+}
+role TA extends STAFF {
+    Person{
+        fullAccess
+    }
+    Course{
+        fullAccess
+    }
+    Department{
+        fullAccess        
+    }
+    FinalGrade{
+        fullAccess        
+    }
+    ProvisionalGrade{
+        fullAccess        
+    }
+    TeachRequest{
+        fullAccess
+    }
+
+
+}
+role PROFESSOR extends STAFF {
+    Person{
+        fullAccess    
+    }
+    Course{
+        fullAccess
+    }   
+    Department{
+        fullAccess
+    }
+    FinalGrade{
+        fullAccess
+    }
+    ProvisionalGrade{
+        fullAccess
+    }
+    TeachRequest{
+        fullAccess
+    }
+
+}
+role ADMIN {
+    Person{
+        fullAccess
+    }
+    Course{
+        fullAccess
+    }
+    Department{ 
+        fullAccess
+    }
+    FinalGrade{
+        fullAccess
+    }
+    ProvisionalGrade{
+        fullAccess
+    }
+    TeachRequest{
+        fullAccess
+    }
+}

@@ -2,14 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.modelinglab</groupId>
-        <artifactId>uniorg</artifactId>
+        <groupId>ch.ethz.inf</groupId>
+        <artifactId>CourseProject</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dtm</artifactId>
     <packaging>ag-dtm</packaging>
-    <name>uniorg-dtm</name>
+    <name>CourseProject-dtm</name>
     
     <build>
         <sourceDirectory>${project.basedir}/src/main/models</sourceDirectory>
@@ -21,7 +21,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <role-enum>Role</role-enum>
-                    <user-entity>User</user-entity>
+                    <user-entity>Person</user-entity>
                 </configuration>
             </plugin>
         </plugins>

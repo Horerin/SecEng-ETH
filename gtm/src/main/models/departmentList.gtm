@@ -1,0 +1,66 @@
+Window DepartmentListWindow {
+    Label Title_L{
+        String text := ['Departments:']
+    }
+    Table Table_T{
+        Set(Department) rows := [Department.allInstances()]
+        Department selected  := [null]
+        columns {
+            ['Name'] : Label name {
+                event onView (text){
+                    try{
+                        text := [$Table_T.row$.name]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+        }
+    }
+    Button View_B {
+        String text:= ['View']
+        event onClick {
+            if [ (not $Table_T.selected$.oclIsUndefined())  ]{
+                open DepartmentWindow(caller:[$DepartmentListWindow.caller$], role:[$DepartmentListWindow.caller$.role], entity:[$Table_T.selected$])
+            } else {
+                notification(['Error'],['Nothing selected'],[500])
+            }
+        }
+    }
+    
+    Label Name_L {
+        String text:= ['Name']
+    }
+    TextField Name_TF {
+        String text:= [null]
+    }
+    Button Create_B {
+        String text:= ['Create']
+        event onClick {
+            if [(not $Name_TF.text$.oclIsUndefined())] {
+                
+                try{
+                    newEntity := new Department
+                    [$newEntity$.name]:=[$Name_TF.text$]
+                    notification(['Success'],['Department created'],[500])
+                    Table_T.rows := [null]
+                    reevaluate Table_T.rows
+                    Name_TF.text:=[null]
+
+                } catch(SecurityException){
+                    notification(['Error'],['Not allowed'],[500])
+                    
+                }
+                
+            } else {
+                notification(['Error'],['The form contains errors.'],[500])
+            }
+        }
+    }
+    Button Back_B{
+        String text := ['Back']
+        event onClick{
+            back
+        }
+    }
+}

@@ -1,0 +1,131 @@
+Window CourseTWindow{
+    Course entity
+
+    Label Entityname_L {
+        String text := [$CourseTWindow.entity$.name]
+    }
+    Label Entityprof_L {
+        String text := ['prof. '.concat($CourseTWindow.entity$.professor.name).concat(' ').concat($CourseTWindow.entity$.professor.surname)]
+    }
+    Label Entityattr_L {
+        String text := ['Student number: '.concat($CourseTWindow.entity$.currStudents->size().toString()).concat(' (out of ').concat($CourseTWindow.entity$.maxCapacity.toString()).concat(')')]
+    }
+    Table Table_Curr_T{
+        Set(Person) rows := [$CourseTWindow.entity$.currStudents.student->asSet()]
+        Person selected := [null]
+        columns {
+            ['Current students'] : Label name {
+                event onView(text){
+                    try{
+                        text := [$Table_Curr_T.row$.name.concat(' ').concat($Table_Curr_T.row$.surname)]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+            ['Provisional grade'] : Label grade {
+                event onView(text){
+                    try{
+                        text := [$Table_Curr_T.row$.currCourses->any(v|v.course=$CourseTWindow.entity$).value.toString()]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+        }
+    }
+    
+    Label Grade_L {
+        String text:= ['Grade']
+    }
+    TextField Grade_TF {
+        String text:= [null]
+    }
+    Button Set_B {
+        String text:= ['Set']
+        Integer grade
+        event onClick {
+            if [ (not $Table_Curr_T.selected$.oclIsUndefined())  ]{
+                if [(not $Grade_TF.text$.oclIsUndefined()) and 
+                    (not $Grade_TF.text$.toInteger().oclIsInvalid())]{
+                    grade := [$Grade_TF.text$.toInteger()]
+                    try{
+                        [$Table_Curr_T.selected$.currCourses->any(g|g.course=$CourseTWindow.entity$).value] := [$grade$]
+                        Table_Curr_T.rows := [null]
+                        reevaluate Table_Curr_T.rows
+                        notification(['Success'],['Grade finalized'],[500])
+                        Grade_TF.text:=[null]
+                    } catch (SecurityException){
+                        notification(['Error'],['Not allowed'],[500])
+                    }
+                } else {
+                    notification(['Error'],['Form invalid'],[500])
+                }  
+            } else {
+                notification(['Error'],['Nothing selected'],[500])
+            }
+        }
+    }
+    Table Table_Past_T{
+        Set(Person) rows := [$CourseTWindow.entity$.pastStudents.student->asSet()]
+        Person selected := [null]
+        columns {
+            ['Past students'] : Label name {
+                event onView(text){
+                    try{
+                        text := [$Table_Past_T.row$.name.concat(' ').concat($Table_Past_T.row$.surname)]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+            ['Final grade'] : Label grade {
+                event onView(text){
+                    try{
+                        text := [$Table_Past_T.row$.pastCourses->any(v|v.course=$CourseTWindow.entity$).value.toString()]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+        }
+    }
+   
+    
+    Label TANum_L {
+        String text := ['Staff number: '.concat($CourseTWindow.entity$.staff->size().toString()).concat(' (out of ').concat(($CourseTWindow.entity$.maxCapacity.div(20)+1).toString()).concat(')')]
+    }
+    
+    Table Table_TA_T{
+        Set(Person) rows := [$CourseTWindow.entity$.staff]
+        Person selected := [null]
+        columns {
+            ['Course Staff'] : Label name {
+                event onView(text){
+                    try{
+                        text := [$Table_TA_T.row$.name.concat(' ').concat($Table_TA_T.row$.surname)]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+            ['Department'] : Label dept {
+                event onView(text){
+                    try{
+                        text := [$Table_TA_T.row$.belongs.name]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+        }
+    }
+   
+   
+    Button Back_B{
+        String text := ['Back']
+        event onClick{
+            back
+        }
+    }
+}

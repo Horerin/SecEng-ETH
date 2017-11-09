@@ -1,0 +1,120 @@
+Window CourseAWindow{
+    Course entity
+
+    Label Entityname_L {
+        String text := [$CourseAWindow.entity$.name]
+    }
+    Label Limit_L {
+        String text:= ['Limit:']
+    }
+    TextField Limit_TF {
+        String text:= [$CourseAWindow.entity$.maxCapacity.toString()]
+    }
+    Button Create_B {
+        String text:= ['Update capacity']
+        Integer limit
+        event onClick {
+            if [(not $Limit_TF.text$.oclIsUndefined()) and
+                (not $Limit_TF.text$.toInteger().oclIsInvalid())] {
+                
+                try{
+                    limit := [$Limit_TF.text$.toInteger()]
+                    [$CourseAWindow.entity$.maxCapacity]:=[$limit$]
+                    Limit_TF.text := [null]
+                    reevaluate Limit_TF.text
+                    Entityattr_L.text := [null]
+                    reevaluate Entityattr_L.text
+                    notification(['Success'],['Course updated'],[500])
+                } catch(SecurityException){
+                    notification(['Error'],['Not allowed'],[500])
+                }
+            } else {
+                notification(['Error'],['The form contains errors.'],[500])
+            }
+        }
+    }
+    Label Entityprof_L {
+        String text := ['prof. '.concat($CourseAWindow.entity$.professor.name).concat(' ').concat($CourseAWindow.entity$.professor.surname)]
+    }
+    Label Entityattr_L {
+        String text := ['Student number: '.concat($CourseAWindow.entity$.currStudents->size().toString()).concat(' (out of ').concat($CourseAWindow.entity$.maxCapacity.toString()).concat(')')]
+    }
+    
+    Table Table_Curr_T{
+        Set(Person) rows := [$CourseAWindow.entity$.currStudents.student->asSet()]
+        Person selected := [null]
+        columns {
+            ['Current students'] : Label name {
+                event onView(text){
+                    try{
+                        text := [$Table_Curr_T.row$.name.concat(' ').concat($Table_Curr_T.row$.surname)]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+        }
+    }
+    
+    Table Table_Past_T{
+        Set(Person) rows := [$CourseAWindow.entity$.pastStudents.student->asSet()]
+        Person selected := [null]
+        columns {
+            ['Past students'] : Label name {
+                event onView(text){
+                    try{
+                        text := [$Table_Past_T.row$.name.concat(' ').concat($Table_Past_T.row$.surname)]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+            ['Final grade'] : Label grade {
+                event onView(text){
+                    try{
+                        text := [$Table_Past_T.row$.pastCourses->any(v|v.course=$CourseAWindow.entity$).value.toString()]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+        }
+    }
+   
+    
+    Label TANum_L {
+        String text := ['Staff number: '.concat($CourseAWindow.entity$.staff->size().toString()).concat(' (out of ').concat(($CourseAWindow.entity$.maxCapacity.div(20)+1).toString()).concat(')')]
+    }
+    
+    Table Table_TA_T{
+        Set(Person) rows := [$CourseAWindow.entity$.staff]
+        Person selected := [null]
+        columns {
+            ['Course Staff'] : Label name {
+                event onView(text){
+                    try{
+                        text := [$Table_TA_T.row$.name.concat(' ').concat($Table_TA_T.row$.surname)]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+            ['Department'] : Label dept {
+                event onView(text){
+                    try{
+                        text := [$Table_TA_T.row$.belongs.name]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+        }
+    }
+    
+    Button Back_B{
+        String text := ['Back']
+        event onClick{
+            back
+        }
+    }
+}

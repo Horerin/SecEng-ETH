@@ -1,0 +1,33 @@
+Window DepartmentWindow{
+    Department entity
+    Label Entityname_L {
+        String text := [$DepartmentWindow.entity$.name]
+    }
+    TextField Entityname_TF {
+        String text := [$DepartmentWindow.entity$.name]
+    }
+    Button Update_B{
+        String text := ['Update']
+        event onClick{
+            if [(not $Entityname_TF.text$.oclIsUndefined())]{
+                try{
+                    [$DepartmentWindow.entity$.name] := [$Entityname_TF.text$]
+                    Entityname_L.text := [null]
+                    reevaluate Entityname_L.text
+                    notification(['Success'],['Department updated'],[500])
+                } catch (SecurityException){
+                    notification(['Error'],['Not allowed'],[500])
+                }
+            } else {
+                notification(['Error'],['Form invalid'],[500])
+            }  
+        }
+    }
+
+    Button Back_B{
+        String text := ['Back']
+        event onClick{
+            back
+        }
+    }
+}

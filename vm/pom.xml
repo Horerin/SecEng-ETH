@@ -2,22 +2,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.modelinglab</groupId>
-        <artifactId>uniorg</artifactId>
+        <groupId>ch.ethz.inf</groupId>
+        <artifactId>CourseProject</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>vm</artifactId>
     <packaging>war</packaging>
-    <name>uniorg VM</name>
+    <name>CourseProject VM</name>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <vaadin.version>7.1.9</vaadin.version>
         <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
         
-        <jndi.jdbc>jdbc/uniorg</jndi.jdbc>
-        <databasename>uniorg</databasename>
+        <jndi.jdbc>jdbc/CourseProject</jndi.jdbc>
+        <databasename>CourseProject</databasename>
     </properties>
     
     <dependencies>
@@ -27,19 +27,19 @@
             <version>2.5</version>
         </dependency>
         <dependency>
-            <groupId>org.modelinglab</groupId>
+            <groupId>ch.ethz.inf</groupId>
             <artifactId>dtm</artifactId>
             <version>${project.version}</version>
             <type>ag-dtm</type>
         </dependency>
         <dependency>
-            <groupId>org.modelinglab</groupId>
+            <groupId>ch.ethz.inf</groupId>
             <artifactId>stm</artifactId>
             <version>${project.version}</version>
             <type>ag-stm</type>
         </dependency>
         <dependency>
-            <groupId>org.modelinglab</groupId>
+            <groupId>ch.ethz.inf</groupId>
             <artifactId>gtm</artifactId>
             <version>${project.version}</version>
             <type>ag-gtm</type>
@@ -63,10 +63,10 @@
                     <datasource>${jndi.jdbc}</datasource> <!--TODO: write here your datasource JNDI name -->
                     <databaseName>${databasename}</databaseName> <!--TODO: write here your database name -->
                     <initialWindowExp>
-                        <!-- Write your initial window expression here-->
+                        Window::InitWindow
                     </initialWindowExp>
                     <initialRoleExp>
-                        <!-- Write your initial role expression here-->
+                        Role::ADMIN
                     </initialRoleExp>
                     <initialCallerExp>
                         <!-- Write your initial caller expression here (optional)-->

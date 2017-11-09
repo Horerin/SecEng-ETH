@@ -1,0 +1,211 @@
+Window CourseListWindow{
+    Label Title_L{
+        String text := ['Courses:']
+    }
+    Table Table_T{
+        Set(Course) rows := [Course.allInstances()]
+        Course selected  := [null]
+        columns {
+            ['Name'] : Label name {
+                event onView (text){
+                    try{
+                        text := [$Table_T.row$.name]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+            ['Current Students'] : Label students {
+                event onView (text){
+                    try{
+                        text := [$Table_T.row$.currStudents->size().toString()]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+            ['Limit'] : Label limit {
+                event onView (text){
+                    try{
+                        text := [$Table_T.row$.maxCapacity.toString()]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+            ['Professor'] : Label prof {
+                event onView (text){
+                    try{
+                        text := [$Table_T.row$.professor.name.concat(' ').concat($Table_T.row$.professor.surname)]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+            ['Department'] : Label dept {
+                event onView (text){
+                    try{
+                        text := [$Table_T.row$.belongingTo.name]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+        }
+    }
+    Button View_B {
+        String text:= ['View']
+        Set(ProvisionalGrade) probe
+        event onClick {
+            if [ (not $Table_T.selected$.oclIsUndefined())  ]{
+                if [ $CourseListWindow.caller$.role=Role::ADMIN ]{
+                    open CourseAWindow(caller:[$CourseListWindow.caller$], role:[$CourseListWindow.caller$.role], entity:[$Table_T.selected$])
+                } else {
+                if [ $CourseListWindow.caller$.role=Role::PROFESSOR ]{
+                    try{
+                        probe := [$Table_T.selected$.currStudents]
+                        open CoursePWindow(caller:[$CourseListWindow.caller$], role:[$CourseListWindow.caller$.role], entity:[$Table_T.selected$])
+                    } catch (SecurityException){
+                        notification(['Error'],['Not allowed'],[500])
+                    }
+                } else {
+                if [ $CourseListWindow.caller$.role=Role::TA ]{
+                    try{
+                        probe := [$Table_T.selected$.currStudents]
+                        open CourseTWindow(caller:[$CourseListWindow.caller$], role:[$CourseListWindow.caller$.role], entity:[$Table_T.selected$])
+                    } catch (SecurityException){
+                        notification(['Error'],['Not allowed'],[500])
+                    }
+                } else {
+                if [ $CourseListWindow.caller$.role=Role::STUDENT ]{
+                    open CourseSWindow(caller:[$CourseListWindow.caller$], role:[$CourseListWindow.caller$.role], entity:[$Table_T.selected$])
+                }}}}
+            } else {
+                notification(['Error'],['Nothing selected'],[500])
+            }
+        }
+    }
+    Button Enroll_B{
+        String text := ['Enroll']
+        event onClick{
+            if [ (not $Table_T.selected$.oclIsUndefined())  ]{
+                
+                    try {
+                        pgrade := new ProvisionalGrade
+                        [$pgrade$.student] := [$CourseListWindow.caller$]
+                        [$Table_T.selected$.currStudents]+=[$pgrade$]
+                        [$CourseListWindow.caller$.currCourses]+=[$pgrade$]
+                        notification(['Success'],['You have enrolled'],[500])
+                    } catch (SecurityException){
+                        notification(['Error'],['Not allowed'],[500])
+                    }
+               
+            } else {
+                notification(['Error'],['Nothing selected'],[500])
+            }
+        }
+    }
+    Button TeachReq_B{
+        String text := ['Teach Request']
+        event onClick{
+            if [ (not $Table_T.selected$.oclIsUndefined())  ]{
+                
+                    try{
+                        tre := new TeachRequest
+                        [$tre$.ta]:=[$CourseListWindow.caller$]
+                        [$tre$.course]:=[$Table_T.selected$]
+                        
+                        notification(['Success'],['Teaching requested'],[500])
+                    } catch (SecurityException){
+                        notification(['Error'],['Not allowed'],[500])
+                    }
+                
+            } else {
+                notification(['Error'],['Nothing selected'],[500])
+            }
+        }
+    }
+    Button Delete_B {
+        String text:= ['Delete']
+        event onClick {
+            if [ (not $Table_T.selected$.oclIsUndefined())  ]{
+                try{
+                    foreach g in [$Table_T.selected$.currStudents] {
+                        [$g$.student.currCourses]-=[$g$]
+                        delete [$g$]
+                    }
+                    foreach fg in [$Table_T.selected$.pastStudents] {
+                        [$fg$.student.pastCourses]-=[$fg$]
+                        delete [$fg$]
+                    }
+                    foreach tr in [$Table_T.selected$.taRequests] {
+                        [$tr$.ta.courseRequests]-=[$tr$]
+                        delete [$tr$]
+                    }
+                    [$Table_T.selected$.belongingTo.offers]-=[$Table_T.selected$]
+                    foreach st in [$Table_T.selected$.staff] {
+                        [$st$.teaches]-=[$Table_T.selected$]
+                    }      
+                    [$Table_T.selected$.professor.administers]-=[$Table_T.selected$]
+                    delete [$Table_T.selected$]
+                    Table_T.rows := [null]
+                    reevaluate Table_T.rows
+                } catch (SecurityException){
+                    notification(['Error'],['Not allowed'],[500])
+                }
+            } else {
+                notification(['Error'],['Nothing selected'],[500])
+            }
+        }
+    }
+    Label Name_L {
+        String text:= ['Name']
+    }
+    TextField Name_TF {
+        String text:= [null]
+    }
+    Label Limit_L {
+        String text:= ['Limit']
+    }
+    TextField Limit_TF {
+        String text:= [null]
+    }
+    Button Create_B {
+        String text:= ['Create']
+        Integer limit
+        event onClick {
+            if [(not $Name_TF.text$.oclIsUndefined()) and 
+                (not $Limit_TF.text$.oclIsUndefined()) and
+                (not $Limit_TF.text$.toInteger().oclIsInvalid())] {
+                
+                try{
+                    limit := [$Limit_TF.text$.toInteger()]
+                    newCourse := new Course
+                    [$newCourse$.professor]:=[$CourseListWindow.caller$]
+                    [$newCourse$.name]:=[$Name_TF.text$]
+                    [$newCourse$.maxCapacity]:=[$limit$]
+                    [$CourseListWindow.caller$.administers]+=[$newCourse$]
+                    [$newCourse$.staff]+=[$CourseListWindow.caller$]
+                    [$CourseListWindow.caller$.teaches]+=[$newCourse$]
+                    [$newCourse$.belongingTo]:=[$CourseListWindow.caller$.belongs]
+                    [$CourseListWindow.caller$.belongs.offers]+=[$newCourse$]
+                    notification(['Success'],['Course created'],[500])
+                    Table_T.rows := [null]
+                    reevaluate Table_T.rows
+                    Name_TF.text:=[null]
+                    Limit_TF.text:=[null]
+                } catch(SecurityException){
+                    notification(['Error'],['Not allowed'],[500])
+                }
+            } else {
+                notification(['Error'],['The form contains errors.'],[500])
+            }
+        }
+    }
+    Button Back_B{
+        String text := ['Back']
+        event onClick{
+            back
+        }
+    }
+}

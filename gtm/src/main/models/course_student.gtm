@@ -1,0 +1,37 @@
+Window CourseSWindow{
+    Course entity
+    Label Entityname_L {
+        String text := [$CourseSWindow.entity$.name]
+    }
+    Label Entityprof_L {
+        String text := ['prof. '.concat($CourseSWindow.entity$.professor.name).concat(' ').concat($CourseSWindow.entity$.professor.surname)]
+    }
+    Label Entitystatus_L {
+        String text := [if ($CourseSWindow.caller$.currCourses->exists(r|r.course=$CourseSWindow.entity$)) 
+                        then 'Status: Enrolled' 
+                        else if ($CourseSWindow.caller$.pastCourses->exists(r|r.course=$CourseSWindow.entity$))
+                             then 'Status: Passed' 
+                             else 'Status: Not Enrolled' 
+                             endif 
+                        endif]
+    }
+    Label Entitygrade_L {
+        String text := [if ($CourseSWindow.caller$.currCourses->exists(r|r.course=$CourseSWindow.entity$)) 
+                        then ''
+                        else if ($CourseSWindow.caller$.pastCourses->exists(r|r.course=$CourseSWindow.entity$))
+                             then if (not ($CourseSWindow.caller$.pastCourses->any(r|r.course=$CourseSWindow.entity$).value.oclIsUndefined()))
+                                  then 'Final grade: '.concat($CourseSWindow.caller$.pastCourses->any(r|r.course=$CourseSWindow.entity$).value.toString())
+                                  else '' 
+                                  endif
+                             else '' 
+                             endif 
+                        endif]
+    }
+    
+    Button Back_B{
+        String text := ['Back']
+        event onClick{
+            back
+        }
+    }
+}

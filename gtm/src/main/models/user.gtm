@@ -1,0 +1,123 @@
+Window UserWindow{
+    Person entity
+    
+    Label Entityname_L {
+        String text := [$UserWindow.entity$.name]
+    }
+    Label Entitysurname_L {
+        String text := [$UserWindow.entity$.surname]
+    }
+    Label Entityusername_L {
+        String text := [$UserWindow.entity$.username]
+    }
+    Label Entitypassword_L {
+        String text := ['*****']
+    }
+    Button Showpass_B{
+        String text := ['Show']
+        event onClick{
+            try{
+                notification(['Confidential'],[$UserWindow.entity$.password],[500])
+            } catch (SecurityException){
+                    notification(['Error'],['Not allowed'],[500])
+            }
+        }
+    }
+    Label Entityrole_L {
+        String text := [$UserWindow.entity$.role.name()]
+    }
+    Label Entitydept_L {
+        String text := [$UserWindow.entity$.belongs.name]
+    }
+    
+    TextField Name_TF {
+        String text := [$UserWindow.entity$.name]
+    }
+    TextField Surname_TF {
+        String text := [$UserWindow.entity$.surname]
+    }
+    PasswordField Password_PF {
+        String text := [$UserWindow.entity$.password]
+    }
+    
+    
+
+
+    Button Update_B{
+        String text := ['Update info']
+        Person newUser
+        event onClick{
+            if [(not $Name_TF.text$.oclIsUndefined()) and 
+                (not ($Name_TF.text$.size()=0)) and
+                (not $Surname_TF.text$.oclIsUndefined()) and 
+                (not ($Surname_TF.text$.size()=0)) and
+                (not $Password_PF.text$.oclIsUndefined()) and
+                (not ($Password_PF.text$.size()=0))]{
+                try{
+                    newUser := [$UserWindow.entity$]
+                    
+                    [$newUser$.name]:=[$Name_TF.text$]
+                    [$newUser$.surname]:=[$Surname_TF.text$]
+                    [$newUser$.password]:=[$Password_PF.text$]
+                    Entityname_L.text := [null]
+                    Entitysurname_L.text := [null]
+                    Entityusername_L.text := [null]
+                    Entityrole_L.text := [null]
+                    reevaluate Entityname_L.text 
+                    reevaluate Entitysurname_L.text
+                    reevaluate Entityusername_L.text
+                    reevaluate Entityrole_L.text 
+                    
+                    notification(['Success'],['User updated'],[500])
+                } catch (SecurityException){
+                    notification(['Error'],['Not allowed'],[500])
+                }
+            } else {
+                notification(['Error'],['Form invalid'],[500])
+            }  
+        }
+    }
+
+    ComboBox Department_CB {
+        Set(Department) rows := [Department.allInstances()->select(r|r.toString().size()<>0)]
+        Department selected  := [$UserWindow.entity$.belongs]
+        Label roles { 
+            event onView (text) {
+                try{
+                    text := [$Department_CB.row$.name] 
+                    
+                } catch (SecurityException){
+                    text := ['RESTRICTED']
+                }
+            }
+        }
+    }
+            
+    Button Update_dept_B{
+        String text := ['Update department']
+        Person newUser
+        event onClick{
+            if [(not $Department_CB.selected$.oclIsUndefined())]{
+                try{
+                    newUser := [$UserWindow.entity$]
+                    [$newUser$.belongs]:=[$Department_CB.selected$]
+                    Entitydept_L.text := [null]
+                    reevaluate Entitydept_L.text 
+                    notification(['Success'],['User updated'],[500])
+                 } catch (SecurityException){
+                    notification(['Error'],['Not allowed'],[500])
+                }
+            } else {
+              notification(['Error'],['Form invalid'],[500])
+            } 
+            
+        }
+}
+    
+    Button Back_B{
+        String text := ['Back']
+        event onClick{
+            back
+        }
+    }
+}

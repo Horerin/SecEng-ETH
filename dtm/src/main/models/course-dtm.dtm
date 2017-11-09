@@ -1,0 +1,61 @@
+entity Person{
+    String name
+    String surname
+    String username
+    String password
+    Role   role
+
+    Set(ProvisionalGrade) currCourses oppositeTo student
+    Set(FinalGrade) pastCourses oppositeTo student
+    
+    Department belongs oppositeTo employs
+    Set(Course) teaches oppositeTo staff
+
+    Set(TeachRequest) courseRequests oppositeTo ta
+
+    Set(Course) administers oppositeTo professor
+
+}
+
+entity ProvisionalGrade{
+    Integer value
+    Person student oppositeTo currCourses
+    Course course oppositeTo currStudents
+}
+
+entity FinalGrade{
+    Integer value
+    Person student oppositeTo pastCourses
+    Course course oppositeTo pastStudents
+}
+
+entity Department{
+    String name
+    Set(Person) employs oppositeTo belongs
+    Set(Course) offers oppositeTo belongingTo
+}
+entity Course{
+    String name
+    Integer maxCapacity
+    
+    Department belongingTo oppositeTo offers
+    Person professor oppositeTo administers
+    Set(Person) staff oppositeTo teaches
+    Set(TeachRequest) taRequests oppositeTo course
+    
+    Set(ProvisionalGrade) currStudents oppositeTo course
+    Set(FinalGrade) pastStudents oppositeTo course
+}
+
+entity TeachRequest{
+    Person ta oppositeTo courseRequests
+    Course course oppositeTo taRequests
+}
+
+enum Role{
+    STUDENT
+    STAFF
+    TA
+    PROFESSOR
+    ADMIN
+}

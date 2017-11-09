@@ -1,0 +1,22 @@
+Window MainWindow {
+    String text := ['Welcome!']
+    Button Departments_B {
+        String text:=['Departments']
+        event onClick{
+            open DepartmentListWindow(caller:[$MainWindow.caller$], role:[$MainWindow.caller$.role])
+        }
+    }
+    Button Courses_B {
+        String text:=['Courses']
+        event onClick{
+            open CourseListWindow(caller:[$MainWindow.caller$], role:[$MainWindow.caller$.role])
+        }
+    }
+    Button Users_B {
+        String text:=['Users']
+        event onClick{
+            open UserListWindow(caller:[$MainWindow.caller$], role:[$MainWindow.caller$.role])
+        }
+    }
+    
+}

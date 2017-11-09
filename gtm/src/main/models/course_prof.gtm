@@ -1,0 +1,280 @@
+Window CoursePWindow{
+    Course entity
+
+    Label Entityname_L {
+        String text := ['Course name:']
+    }
+    TextField Name_TF {
+        String text := [$CoursePWindow.entity$.name]
+    }
+    Label Limit_L {
+        String text:= ['Limit:']
+    }
+    TextField Limit_TF {
+        String text:= [$CoursePWindow.entity$.maxCapacity.toString()]
+    }
+    Label Entityprof_L {
+        String text := ['prof. '.concat($CoursePWindow.entity$.professor.name).concat(' ').concat($CoursePWindow.entity$.professor.surname)]
+    }
+    Label Entityattr_L {
+        String text := ['Student number: '.concat($CoursePWindow.entity$.currStudents->size().toString()).concat(' (out of ').concat($CoursePWindow.entity$.maxCapacity.toString()).concat(')')]
+    }
+
+    Button Create_B {
+        String text:= ['Update']
+        Integer limit
+        event onClick {
+            if [(not $Name_TF.text$.oclIsUndefined()) and 
+                (not $Limit_TF.text$.oclIsUndefined()) and
+                (not $Limit_TF.text$.toInteger().oclIsInvalid())] {
+                
+                try{
+                    limit := [$Limit_TF.text$.toInteger()]
+                    [$CoursePWindow.entity$.name]:=[$Name_TF.text$]
+                    [$CoursePWindow.entity$.maxCapacity]:=[$limit$]
+                    Name_TF.text := [null]
+                    reevaluate Name_TF.text
+                    Limit_TF.text := [null]
+                    reevaluate Limit_TF.text
+                    Entityattr_L.text := [null]
+                    reevaluate Entityattr_L.text
+                    TANum_L.text := [null]
+                    reevaluate TANum_L.text
+                    notification(['Success'],['Course updated'],[500])
+                } catch(SecurityException){
+                    notification(['Error'],['Not allowed'],[500])
+                }
+            } else {
+                notification(['Error'],['The form contains errors.'],[500])
+            }
+        }
+    }
+    
+    Table Table_Curr_T{
+        Set(Person) rows := [$CoursePWindow.entity$.currStudents.student->asSet()]
+        Person selected := [null]
+        columns {
+            ['Current students'] : Label name {
+                event onView(text){
+                    try{
+                        text := [$Table_Curr_T.row$.name.concat(' ').concat($Table_Curr_T.row$.surname)]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+            ['Provisional grade'] : Label grade {
+                event onView(text){
+                    try{
+                        text := [$CoursePWindow.entity$.currStudents->any(v|v.student=$Table_Curr_T.row$).value.toString()]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+        }
+    }
+    Button Finalize_B {
+        String text:= ['Finalize']
+        ProvisionalGrade pgrade
+        event onClick {
+            if [ (not $Table_Curr_T.selected$.oclIsUndefined())  ]{
+                pgrade := [$CoursePWindow.entity$.currStudents->any(v|v.student=$Table_Curr_T.selected$)]
+                if [(not $pgrade$.value.oclIsUndefined()) and
+                    (not $pgrade$.value.oclIsInvalid())]{
+                    try{
+                        grade := new FinalGrade
+                        [$grade$.course]:=[$pgrade$.course]
+                        [$grade$.value]:=[$pgrade$.value]
+                        [$grade$.student]:=[$pgrade$.student]
+                        
+                        delete [$pgrade$]
+                        Entityattr_L.text := [null]
+                        reevaluate Entityattr_L.text
+                        Table_Past_T.rows := [null]
+                        reevaluate Table_Past_T.rows
+                        Table_Curr_T.rows := [null]
+                        reevaluate Table_Curr_T.rows
+                        notification(['Success'],['Grade finalized'],[500])
+                    } catch (SecurityException){
+                        notification(['Error'],['Not allowed'],[500])
+                    }
+                } else {
+                    notification(['Error'],['Provisional grade not defined'],[500])
+                }
+            } else {
+                notification(['Error'],['Nothing selected'],[500])
+            }
+            
+        }
+    }
+    Label Grade_L {
+        String text:= ['New grade:']
+    }
+    TextField Grade_TF {
+        String text:= [null]
+    }
+    Button Set_B {
+        String text:= ['Set']
+        Integer grade
+        event onClick {
+            if [ (not $Table_Curr_T.selected$.oclIsUndefined())  ]{
+                if [(not $Grade_TF.text$.oclIsUndefined()) and 
+                    (not $Grade_TF.text$.toInteger().oclIsInvalid())]{
+                    grade := [$Grade_TF.text$.toInteger()]
+                    try{
+                        [$CoursePWindow.entity$.currStudents->any(v|v.student=$Table_Curr_T.selected$).value] := [$grade$]
+                        Table_Curr_T.rows := [null]
+                        reevaluate Table_Curr_T.rows
+                        notification(['Success'],['Grade assigned'],[500])
+                        Grade_TF.text:=[null]
+                    } catch (SecurityException){
+                        notification(['Error'],['Not allowed'],[500])
+                    }
+                } else {
+                    notification(['Error'],['Form invalid'],[500])
+                }  
+            } else {
+                notification(['Error'],['Nothing selected'],[500])
+            }
+        }
+    }
+    Table Table_Past_T{
+        Set(Person) rows := [$CoursePWindow.entity$.pastStudents.student->asSet()]
+        Person selected := [null]
+        columns {
+            ['Past students'] : Label name {
+                event onView(text){
+                    try{
+                        text := [$Table_Past_T.row$.name.concat(' ').concat($Table_Past_T.row$.surname)]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+            ['Final grade'] : Label grade {
+                event onView(text){
+                    try{
+                        text := [$CoursePWindow.entity$.pastStudents->any(v|v.student=$Table_Past_T.row$).value.toString()]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+        }
+    }
+   
+    
+    Label TANum_L {
+        String text := ['Staff number: '.concat($CoursePWindow.entity$.staff->size().toString()).concat(' (out of ').concat(($CoursePWindow.entity$.maxCapacity.div(20)+1).toString()).concat(')')]
+    }
+    Table Table_ReqTA_T{
+        Set(Person) rows := [$CoursePWindow.entity$.taRequests.ta->asSet()]
+        Person selected := [null]
+        columns {
+            ['TA requests'] : Label name {
+                event onView(text){
+                    try{
+                        text := [$Table_ReqTA_T.row$.name.concat(' ').concat($Table_ReqTA_T.row$.surname)]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+            ['Department'] : Label dept {
+                event onView(text){
+                    try{
+                        text := [$Table_ReqTA_T.row$.belongs.name]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+        }
+    }
+    
+    Table Table_TA_T{
+        Set(Person) rows := [$CoursePWindow.entity$.staff]
+        Person selected := [null]
+        columns {
+            ['Course Staff'] : Label name {
+                event onView(text){
+                    try{
+                        text := [$Table_TA_T.row$.name.concat(' ').concat($Table_TA_T.row$.surname)]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+            ['Department'] : Label dept {
+                event onView(text){
+                    try{
+                        text := [$Table_TA_T.row$.belongs.name]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                }
+            }
+        }
+        
+    }
+    Button Approve_B{
+        String text:=['Approve']
+        TeachRequest tr
+        Person ta
+        event onClick{
+            if [ (not $Table_ReqTA_T.selected$.oclIsUndefined())  ]{
+                try {
+                    ta := [$Table_ReqTA_T.selected$]
+                    tr := [$CoursePWindow.entity$.taRequests->any(tr|tr.ta=$ta$)]
+                    
+                    delete [$tr$]
+                    [$CoursePWindow.entity$.staff]+=[$ta$]
+                    TANum_L.text := [null]
+                    reevaluate TANum_L.text
+                    Table_ReqTA_T.rows := [null]
+                    reevaluate Table_ReqTA_T.rows
+                    Table_TA_T.rows := [null]
+                    reevaluate Table_TA_T.rows
+                    notification(['Success'],['TA approved'],[500])
+                    
+                } catch (SecurityException){
+                        notification(['Error'],['Not allowed'],[500])
+                }
+            } else {
+                notification(['Error'],['Nothing selected'],[500])
+            }
+        }   
+    }
+    Button Reject_B{
+        String text:=['Reject']
+        TeachRequest req
+        Person rejta
+        event onClick{
+            if [ (not $Table_ReqTA_T.selected$.oclIsUndefined())  ]{
+                try {
+                    rejta := [$Table_ReqTA_T.selected$]
+                    req := [$CoursePWindow.entity$.taRequests->any(tr|tr.ta=$rejta$)]
+                  
+                    delete [$req$]
+                    TANum_L.text := [null]
+                    reevaluate TANum_L.text
+                    Table_ReqTA_T.rows := [null]
+                    reevaluate Table_ReqTA_T.rows
+                    notification(['Success'],['TA rejected'],[500])
+                    
+                } catch (SecurityException){
+                        notification(['Error'],['Not allowed'],[500])
+                }
+            } else {
+                notification(['Error'],['Nothing selected'],[500])
+            }
+        }   
+    }
+    Button Back_B{
+        String text := ['Back']
+        event onClick{
+            back
+        }
+    }
+}
