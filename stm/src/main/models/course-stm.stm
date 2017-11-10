@@ -1,4 +1,6 @@
 
+// TO ASK: can we leave entities/attributes that are protected by GUI on fullAccess?
+
 role STUDENT {
     Person{
         read(name) constrainedBy [self.role = Role::PROFESSOR or self = caller]
@@ -32,13 +34,16 @@ role STUDENT {
         read(name)
     }
     FinalGrade{
-        fullAccess
+        read(value)
+        read(student)
+        read(course)
     }
     ProvisionalGrade{
-        fullAccess
+        read(course)
+        read(student)
     }
     TeachRequest{
-        fullAccess        
+                
     }
 }
 role STAFF {
