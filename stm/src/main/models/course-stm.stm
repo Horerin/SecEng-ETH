@@ -1,13 +1,19 @@
 
 role STUDENT {
     Person{
-         fullAccess
+        read(name) constrainedBy [self.role = Role::PROFESSOR or self = caller]
+        read(surname) constrainedBy [self.role = Role::PROFESSOR or self = caller]        
+        read(role) constrainedBy [self.role = Role::PROFESSOR or self = caller]    
+        read(belongs) constrainedBy [self.role = Role::PROFESSOR or self = caller]
     }
     Course{
-        fullAccess
+       read(name),
+       read(maxCapacity),
+       read(belongingTo), // Department
+       read(professor)
     }
     Department{
-        fullAccess
+        read(name)
     }
     FinalGrade{
         fullAccess

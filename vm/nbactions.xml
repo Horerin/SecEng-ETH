@@ -2,7 +2,7 @@
 <actions>
         <action>
             <actionName>CUSTOM-jetty</actionName>
-            <displayName>Jetty</displayName>
+            <displayName>jetty</displayName>
             <goals>
                 <goal>jetty:run-war</goal>
             </goals>
