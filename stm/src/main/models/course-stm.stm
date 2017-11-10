@@ -13,6 +13,9 @@ role STUDENT {
 
         add(currCourses) constrainedBy [ self = caller and
                     (target.course.currStudents->size() <= target.course.maxCapacity)]
+
+        read(currCourses)
+        read(pastCourses)
     }
     Course{
        read(name)
