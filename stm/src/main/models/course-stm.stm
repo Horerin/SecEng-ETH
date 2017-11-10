@@ -39,8 +39,10 @@ role STUDENT {
         read(course)
     }
     ProvisionalGrade{
+        create
         read(course)
         read(student)
+        update(student)
     }
     TeachRequest{
                 
@@ -57,7 +59,6 @@ role STAFF {
         update(password) constrainedBy [self = caller]
         read(role)
         read(belongs)
-
 
         read(currCourses)
     }
@@ -79,10 +80,13 @@ role STAFF {
         read(value)
     }
     ProvisionalGrade{
-        fullAccess
+        read(student)
+        read(course)
+        read(value)
+        update(value) constrainedBy [
+            caller.teaches->includes(self.course)]
     }
-    TeachRequest{
-        fullAccess        
+    TeachRequest{        
     }
 }
 role TA extends STAFF {
@@ -96,13 +100,13 @@ role TA extends STAFF {
        
     }
     FinalGrade{
-        fullAccess        
+                
     }
     ProvisionalGrade{
         fullAccess
     }
     TeachRequest{
-        fullAccess
+        
     }
 
 
