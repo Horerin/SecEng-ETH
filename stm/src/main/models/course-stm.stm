@@ -10,12 +10,20 @@ role STUDENT {
         update(password) constrainedBy [self = caller]
         read(role) constrainedBy [self.role = Role::PROFESSOR or self = caller]    
         read(belongs) constrainedBy [self.role = Role::PROFESSOR or self = caller]
+
+        add(currCourses) constrainedBy [ self = caller and
+                    (target.course.currStudents->size() <= target.course.maxCapacity)]
     }
     Course{
-       read(name),
-       read(maxCapacity),
-       read(belongingTo), // Department
+       read(name)
+       read(maxCapacity)
+       read(belongingTo) // Department
        read(professor)
+
+       read(currStudents)
+       add(currStudents) constrainedBy [
+            self.currStudents.student->excludes(caller) and
+            self.pastStudents.student->excludes(caller)]
     }
     Department{
         read(name)
