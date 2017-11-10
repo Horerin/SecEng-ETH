@@ -14,7 +14,7 @@ role STUDENT {
         read(belongs) constrainedBy [self.role = Role::PROFESSOR or self = caller]
 
         add(currCourses) constrainedBy [ self = caller and
-                    (target.course.currStudents->size() <= target.course.maxCapacity)]
+                    (target.course.currStudents->size() <= target.course.maxCapacity)]  // if we use '<', maximum "maxCapacity-1" is allowed
 
         read(currCourses)
         read(pastCourses)
@@ -61,6 +61,7 @@ role STAFF {
         read(belongs)
 
         read(currCourses)
+        read(pastCourses)
     }
     Course{
         read(name)
@@ -77,7 +78,8 @@ role STAFF {
         read(name)
     }
     FinalGrade{
-        read(value)
+        read(student), read(course), read(value) constrainedBy [
+            caller.teaches->includes(self.course)]       
     }
     ProvisionalGrade{
         read(student), read(course), read(value),
@@ -98,26 +100,30 @@ role TA extends STAFF {
        
     }
     FinalGrade{
-                
+   
     }
     ProvisionalGrade{
 
     }
     TeachRequest{
-        
+        create
+        update(ta)
+        //update(course) constrainedBy [(self.course.staff->size() <= (target.maxCapacity->div(20))) and
+          //     (caller.teaches->excludes(self.course))] //and
+  /// TODO: we need a "created" boolean            // (caller.courseRequests->excludes(target))]
     }
 
 
 }
 role PROFESSOR extends STAFF {
     Person{
-          
+          fullAccess
     }
     Course{
-        
+        fullAccess
     }   
     Department{
-
+        fullAccess
     }
     FinalGrade{
         fullAccess
