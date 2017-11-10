@@ -80,9 +80,7 @@ role STAFF {
         read(value)
     }
     ProvisionalGrade{
-        read(student)
-        read(course)
-        read(value)
+        read(student), read(course), read(value),
         update(value) constrainedBy [
             caller.teaches->includes(self.course)]
     }
@@ -103,7 +101,7 @@ role TA extends STAFF {
                 
     }
     ProvisionalGrade{
-        fullAccess
+
     }
     TeachRequest{
         
