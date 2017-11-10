@@ -48,13 +48,16 @@ role STUDENT {
 }
 role STAFF {
     Person{
-        fullAccess
+        read(name)
+        read(surname)
+        read(role)
+        read(belongs)
     }
     Course{
         fullAccess
     }
     Department{
-        fullAccess
+        read(name)
     }
     FinalGrade{
         fullAccess
