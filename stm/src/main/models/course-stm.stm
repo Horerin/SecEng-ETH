@@ -2,7 +2,12 @@
 role STUDENT {
     Person{
         read(name) constrainedBy [self.role = Role::PROFESSOR or self = caller]
-        read(surname) constrainedBy [self.role = Role::PROFESSOR or self = caller]        
+        update(name) constrainedBy [self = caller]
+        read(surname) constrainedBy [self.role = Role::PROFESSOR or self = caller]     
+        update(surname) constrainedBy [self = caller]
+        read(username) constrainedBy [self = caller]
+        read(password) constrainedBy [self = caller]
+        update(password) constrainedBy [self = caller]
         read(role) constrainedBy [self.role = Role::PROFESSOR or self = caller]    
         read(belongs) constrainedBy [self.role = Role::PROFESSOR or self = caller]
     }
