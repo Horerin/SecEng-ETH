@@ -57,18 +57,26 @@ role STAFF {
         update(password) constrainedBy [self = caller]
         read(role)
         read(belongs)
+
+
+        read(currCourses)
     }
     Course{
         read(name)
         read(maxCapacity)
         read(professor)
         read(belongingTo) // Department
+        
+        read(staff) constrainedBy [self.staff->includes(caller)]    // It is not necessary to make professors invisible, as any staff member can see the administering professor of each course
+        read(currStudents) constrainedBy [self.staff->includes(caller)]
+        read(pastStudents) constrainedBy [self.staff->includes(caller)]
+
     }
     Department{
         read(name)
     }
     FinalGrade{
-        fullAccess
+        read(value)
     }
     ProvisionalGrade{
         fullAccess
@@ -91,7 +99,7 @@ role TA extends STAFF {
         fullAccess        
     }
     ProvisionalGrade{
-        fullAccess        
+        fullAccess
     }
     TeachRequest{
         fullAccess
