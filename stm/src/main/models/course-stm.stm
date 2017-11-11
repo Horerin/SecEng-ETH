@@ -91,10 +91,10 @@ role STAFF {
 }
 role TA extends STAFF {
     Person{
-        
+         
     }
     Course{
-        
+
     }
     Department{
        
@@ -107,10 +107,13 @@ role TA extends STAFF {
     }
     TeachRequest{
         create
-        update(ta)
-        //update(course) constrainedBy [(self.course.staff->size() <= (target.maxCapacity->div(20))) and
-          //     (caller.teaches->excludes(self.course))] //and
-  /// TODO: we need a "created" boolean            // (caller.courseRequests->excludes(target))]
+        update(ta)        
+        // Professor is included in staff => we need to subtract with 1
+        // If TA is already teaching this course, no request for this course can be send
+        // If TA already has a request pending for this course, TA cannot send another request
+        update(course) constrainedBy [(value.staff->size()-1 <= value.maxCapacity.div(20)) and
+               value.staff->excludes(caller) and
+               value.taRequests.ta->excludes(caller)]        
     }
 
 
