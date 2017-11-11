@@ -145,7 +145,7 @@ Window CourseListWindow{
                     [$Table_T.selected$.belongingTo.offers]-=[$Table_T.selected$]
                     foreach st in [$Table_T.selected$.staff] {
                         [$st$.teaches]-=[$Table_T.selected$]
-                    }      
+                    }     
                     [$Table_T.selected$.professor.administers]-=[$Table_T.selected$]
                     delete [$Table_T.selected$]
                     Table_T.rows := [null]

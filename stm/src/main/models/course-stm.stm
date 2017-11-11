@@ -121,26 +121,42 @@ role TA extends STAFF {
 role PROFESSOR extends STAFF {
     Person{
         add(administers), add(teaches) constrainedBy [self = caller]
+
+        remove(currCourses) constrainedBy [target.course.professor = caller]
+        remove(pastCourses) constrainedBy [target.course.professor = caller]
+
+        remove(courseRequests) constrainedBy [target.course.professor = caller]
+
+        remove(teaches) constrainedBy [target.professor = caller]   // Prof can remove staff members from his course
+
+        remove(administers) constrainedBy [target.professor = caller] // Prof can remove himself from his own course
     }
     Course{
         create
         update(professor) constrainedBy [value = caller]
-        update(name), update(maxCapacity), add(staff) constrainedBy [self.professor = caller] 
-        
-        
+        update(name), update(maxCapacity), add(staff) constrainedBy [self.professor = caller]        
         update(belongingTo) constrainedBy [self.professor.belongs = value]      
-                
+
+
+        delete
+        read(taRequests) constrainedBy [self.professor = caller]
+        remove(taRequests) constrainedBy [self.professor = caller]
+
     }   
     Department{
         add(offers) constrainedBy [self = caller.belongs] // A prof can only add a course to a department he belongs too
+
+        remove(offers) constrainedBy [target.professor = caller]    // Prof can only remove his own courses from department
     }
     FinalGrade{
-        fullAccess
+        read(student) constrainedBy [caller.administers -> includes(self.course)]
+        delete constrainedBy [caller.administers->includes(self.course)]
     }
     ProvisionalGrade{
-        fullAccess
+        delete constrainedBy [caller.administers->includes(self.course)]
     }
     TeachRequest{
+        delete constrainedBy [caller.administers->includes(self.course)]
     }
 
 }
