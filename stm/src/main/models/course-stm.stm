@@ -155,8 +155,12 @@ role PROFESSOR extends STAFF {
         remove(offers) constrainedBy [target.professor = caller]    // Prof can only remove his own courses from department
     }
     FinalGrade{
+        create
         read(student) constrainedBy [caller.administers -> includes(self.course)]
         delete constrainedBy [caller.administers->includes(self.course)]
+
+        update(course) constrainedBy [caller.administers->includes(value)]       // Prof can only link a final grade to a course he is administering himself
+        update(value), update(student) constrainedBy [self.course.professor = caller]
     }
     ProvisionalGrade{
         delete constrainedBy [caller.administers->includes(self.course)]
