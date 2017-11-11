@@ -122,6 +122,7 @@ role PROFESSOR extends STAFF {
     Person{
         add(administers), add(teaches) constrainedBy [self = caller]
 
+        // Delete course
         remove(currCourses) constrainedBy [target.course.professor = caller]
         remove(pastCourses) constrainedBy [target.course.professor = caller]
 
@@ -130,6 +131,9 @@ role PROFESSOR extends STAFF {
         remove(teaches) constrainedBy [target.professor = caller]   // Prof can remove staff members from his course
 
         remove(administers) constrainedBy [target.professor = caller] // Prof can remove himself from his own course
+
+        // TA Requests
+        
     }
     Course{
         create
@@ -137,14 +141,13 @@ role PROFESSOR extends STAFF {
         update(name), add(staff) constrainedBy [self.professor = caller]        
         update(belongingTo) constrainedBy [self.professor.belongs = value]      
 
-
+        // Delete course
         delete
         read(taRequests) constrainedBy [self.professor = caller]
         remove(taRequests) constrainedBy [self.professor = caller]
 
         update(maxCapacity) constrainedBy [self.professor = caller and
                 value >= self.currStudents->size()]
-
     }   
     Department{
         add(offers) constrainedBy [self = caller.belongs] // A prof can only add a course to a department he belongs too
@@ -160,6 +163,7 @@ role PROFESSOR extends STAFF {
     }
     TeachRequest{
         delete constrainedBy [caller.administers->includes(self.course)]
+        read(ta) constrainedBy [self.course.professor = caller]
     }
 
 }
