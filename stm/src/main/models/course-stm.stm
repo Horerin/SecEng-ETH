@@ -134,13 +134,16 @@ role PROFESSOR extends STAFF {
     Course{
         create
         update(professor) constrainedBy [value = caller]
-        update(name), update(maxCapacity), add(staff) constrainedBy [self.professor = caller]        
+        update(name), add(staff) constrainedBy [self.professor = caller]        
         update(belongingTo) constrainedBy [self.professor.belongs = value]      
 
 
         delete
         read(taRequests) constrainedBy [self.professor = caller]
         remove(taRequests) constrainedBy [self.professor = caller]
+
+        update(maxCapacity) constrainedBy [self.professor = caller and
+                value >= self.currStudents->size()]
 
     }   
     Department{
