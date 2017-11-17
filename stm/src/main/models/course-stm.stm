@@ -25,7 +25,8 @@ role STUDENT {
        read(belongingTo) // Department
        read(professor)
 
-       read(currStudents)
+       // i think students arent allowed to see the current number of students
+       //read(currStudents)
        add(currStudents) constrainedBy [
             self.currStudents.student->excludes(caller) and
             self.pastStudents.student->excludes(caller)]
@@ -173,21 +174,34 @@ role PROFESSOR extends STAFF {
 }
 role ADMIN {
     Person{
-        fullAccess
+        create //constrainedBy [Person.allInstances()->forAll(c|c.username <> $Name_TF.text$)] 
+        read(name)
+        read(surname)
+        read(username)
+        read(password)
+        read(belongs)
+        update(belongs)
     }
     Course{
-        fullAccess
+        read(name)
+        read(maxCapacity)
+        update(maxCapacity) constrainedBy [value >= self.maxCapacity]
+        read(belongingTo)
+        read(professor)
+        read(staff)
+        read(currStudents)
+        read(pastStudents)
     }
     Department{ 
-        fullAccess
+        create
+        read
+        update
     }
     FinalGrade{
-        fullAccess
+        read // final grades are only for past users, so this is fine i guess
     }
     ProvisionalGrade{
-        fullAccess
     }
     TeachRequest{
-        fullAccess
     }
 }
