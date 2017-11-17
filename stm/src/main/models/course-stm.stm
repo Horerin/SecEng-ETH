@@ -174,12 +174,13 @@ role PROFESSOR extends STAFF {
 }
 role ADMIN {
     Person{
-        create //constrainedBy [Person.allInstances()->forAll(c|c.username <> $Name_TF.text$)] 
+        create //constrainedBy [Person.allInstances()->forAll(c| Person.allInstances()->forAll(d|d=c or c.username <> d.username))] 
         read(name)
         read(surname)
         read(username)
         read(password)
         read(belongs)
+        read(role)
         update(belongs)
     }
     Course{
