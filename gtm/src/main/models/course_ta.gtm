@@ -26,7 +26,7 @@ Window CourseTWindow{
             ['Provisional grade'] : Label grade {
                 event onView(text){
                     try{
-                        text := [$Table_Curr_T.row$.currCourses->any(v|v.course=$CourseTWindow.entity$).value.toString()]
+                        text := [$CourseTWindow.entity$.currStudents->any(v|v.student=$Table_Curr_T.row$).value.toString()]
                     } catch (SecurityException){
                         text := ['RESTRICTED']
                     }
@@ -50,7 +50,7 @@ Window CourseTWindow{
                     (not $Grade_TF.text$.toInteger().oclIsInvalid())]{
                     grade := [$Grade_TF.text$.toInteger()]
                     try{
-                        [$Table_Curr_T.selected$.currCourses->any(g|g.course=$CourseTWindow.entity$).value] := [$grade$]
+                        [$CourseTWindow.entity$.currStudents->any(g|g.student=$Table_Curr_T.selected$).value]:= [$grade$]
                         Table_Curr_T.rows := [null]
                         reevaluate Table_Curr_T.rows
                         notification(['Success'],['Grade finalized'],[500])
@@ -82,7 +82,7 @@ Window CourseTWindow{
             ['Final grade'] : Label grade {
                 event onView(text){
                     try{
-                        text := [$Table_Past_T.row$.pastCourses->any(v|v.course=$CourseTWindow.entity$).value.toString()]
+                        text := [$CourseTWindow.entity$.pastStudents->any(v|v.student=$Table_Past_T.row$).value.toString()]
                     } catch (SecurityException){
                         text := ['RESTRICTED']
                     }
