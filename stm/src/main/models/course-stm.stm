@@ -2,117 +2,103 @@
 // TO ASK: can we leave entities/attributes that are protected by GUI on fullAccess?
 
 role STUDENT {
+    Department{
+        // 1.1.
+        read(name)
+    }
+
     Person{
-        read(name) constrainedBy [self.role = Role::PROFESSOR or self = caller]
-        update(name) constrainedBy [self = caller]
-        read(surname) constrainedBy [self.role = Role::PROFESSOR or self = caller]     
-        update(surname) constrainedBy [self = caller]
-        read(username) constrainedBy [self = caller]
+        // 1.2. / 2.
+        read(name), read(surname) constrainedBy [self.role = Role::PROFESSOR or
+                                                self = caller] 
+        read(role), read(belongs) constrainedBy [self.role = Role::PROFESSOR or
+                                                self = caller] // from gtm
+        // 3.
         read(password) constrainedBy [self = caller]
-        update(password) constrainedBy [self = caller]
-        read(role) constrainedBy [self.role = Role::PROFESSOR or self = caller]    
-        read(belongs) constrainedBy [self.role = Role::PROFESSOR or self = caller]
-
-        add(currCourses) constrainedBy [ self = caller and
-                    (target.course.currStudents->size() <= target.course.maxCapacity)]  // if we use '<', maximum "maxCapacity-1" is allowed
-
+        update(name), update(surname), update(password) constrainedBy [self = caller]
+        // 4.
+        add(currCourses) constrainedBy [self = caller and
+                    (target.course.currStudents->size() <= target.course.maxCapacity)]
+        // 5.
         read(currCourses)
         read(pastCourses)
+
+        // from gtm
+        read(username) constrainedBy [self = caller]
     }
     Course{
-       read(name)
-       read(maxCapacity)
-       read(belongingTo) // Department
-       read(professor)
-
-       // i think students arent allowed to see the current number of students
-       //read(currStudents)
+       // 2.
+       read(name), read(maxCapacity), read(belongingTo), read(professor)
+       // 4.
        add(currStudents) constrainedBy [
             self.currStudents.student->excludes(caller) and
             self.pastStudents.student->excludes(caller)]
     }
-    Department{
-        read(name)
-    }
+    
     FinalGrade{
-        read(value)
-        read(student)
-        read(course)
+        // 5. 
+        // not sure if we are allowed to see more than the grade
+        read(value), read(student), read(course) constrainedBy [self.student = caller]
     }
     ProvisionalGrade{
+        // from gtm, without this gui model doesnt work
         create
         read(course)
         read(student)
         update(student)
-    }
-    TeachRequest{
-                
+
     }
 }
 role STAFF {
-    Person{
+    Department{
+        // 1.
         read(name)
-        update(name) constrainedBy [self = caller]
-        read(surname)
-        update(surname) constrainedBy [self = caller]
-        read(username) constrainedBy [self = caller]
-        read(password) constrainedBy [self = caller]
-        update(password) constrainedBy [self = caller]
-        read(role)
-        read(belongs)
+    }
+    Person{
+        // 2. / 4.ta
+        read(name), read(surname), 
+        read(role), read(belongs)
+        // 4.
+        read(password), update(surname), 
+        update(name), update(password) constrainedBy [self = caller]
 
-        read(currCourses)
-        read(pastCourses)
+        // from gtm
+        read(username) constrainedBy [self = caller]
+        read(currCourses), read(pastCourses)
     }
     Course{
-        read(name)
-        read(maxCapacity)
-        read(professor)
-        read(belongingTo) // Department
-        
-        read(staff) constrainedBy [self.staff->includes(caller)]    // It is not necessary to make professors invisible, as any staff member can see the administering professor of each course
-        read(currStudents) constrainedBy [self.staff->includes(caller)]
-        read(pastStudents) constrainedBy [self.staff->includes(caller)]
-
+        // 3.
+        read(name), read(maxCapacity), read(professor), read(belongingTo)        
+        // 5.
+        // It is not necessary to make professors invisible, as any staff member can see the administering professor of each course
+        read(staff), read(currStudents), 
+        read(pastStudents) constrainedBy [self.staff->includes(caller)]    
     }
-    Department{
-        read(name)
-    }
-    FinalGrade{
-        read(student), read(course), read(value) constrainedBy [
-            caller.teaches->includes(self.course)]       
-    }
+    
     ProvisionalGrade{
-        read(student), read(course), read(value),
-        update(value) constrainedBy [
-            caller.teaches->includes(self.course)]
+        // 6.
+        // we do not have to impose a restriction for that "only students 
+        // attending the course..." since the gui model doesnt allow it
+        // and the gui model tries to access all values when displaying the 
+        // current provisional grade. Therefore it has to be able to do that
+        read(course), read(student), read(value), update(value) 
     }
-    TeachRequest{        
+
+    FinalGrade{
+        //7.
+        read(course), read(student), read(value)      
     }
 }
 role TA extends STAFF {
-    Person{
-         
-    }
-    Course{
-
-    }
-    Department{
-       
-    }
-    FinalGrade{
-   
-    }
-    ProvisionalGrade{
-
-    }
     TeachRequest{
         create
-        update(ta)        
+        update(ta) constrainedBy [self.ta = null and value = caller]
+        // 1.
         // Professor is included in staff => we need to subtract with 1
         // If TA is already teaching this course, no request for this course can be send
         // If TA already has a request pending for this course, TA cannot send another request
-        update(course) constrainedBy [(value.staff->size()-1 <= value.maxCapacity.div(20)) and
+        update(course) constrainedBy [self.course = null and value <> null and
+               (value.staff->size()-1 < value.maxCapacity.div(20)) and
                value.staff->excludes(caller) and
                value.taRequests.ta->excludes(caller)]        
     }
@@ -120,6 +106,15 @@ role TA extends STAFF {
 
 }
 role PROFESSOR extends STAFF {
+
+    Department{
+        // 1.
+        // A prof can only add a course to a department he belongs too
+        add(offers) constrainedBy [self = caller.belongs] 
+        // Prof can only remove his own courses from department
+        remove(offers) constrainedBy [target.professor = caller]    
+    }
+
     Person{
         add(administers), add(teaches) constrainedBy [self = caller]
 
@@ -137,72 +132,95 @@ role PROFESSOR extends STAFF {
         
     }
     Course{
+        // 1. 
         create
         update(professor) constrainedBy [value = caller]
+        // 3.
         update(name), add(staff) constrainedBy [self.professor = caller]        
         update(belongingTo) constrainedBy [self.professor.belongs = value]      
 
-        // Delete course
+        // 2.
+        // Delete course -> since this deletes grades and teaching requests
+        // Professor should be allowed to do so
         delete
         read(taRequests) constrainedBy [self.professor = caller]
         remove(taRequests) constrainedBy [self.professor = caller]
-
+        // 4.
         update(maxCapacity) constrainedBy [self.professor = caller and
                 value >= self.currStudents->size()]
     }   
-    Department{
-        add(offers) constrainedBy [self = caller.belongs] // A prof can only add a course to a department he belongs too
-
-        remove(offers) constrainedBy [target.professor = caller]    // Prof can only remove his own courses from department
-    }
+    
     FinalGrade{
+        // 6.
         create
         read(student) constrainedBy [caller.administers -> includes(self.course)]
+        // 4.
         delete constrainedBy [caller.administers->includes(self.course)]
 
         update(course) constrainedBy [caller.administers->includes(value)]       // Prof can only link a final grade to a course he is administering himself
         update(value), update(student) constrainedBy [self.course.professor = caller]
     }
     ProvisionalGrade{
+        // 4. / 6.
         delete constrainedBy [caller.administers->includes(self.course)]
     }
     TeachRequest{
+        // 4. / 5.
         delete constrainedBy [caller.administers->includes(self.course)]
         read(ta) constrainedBy [self.course.professor = caller]
     }
 
 }
 role ADMIN {
-    Person{
-        create //constrainedBy [Person.allInstances()->forAll(c| Person.allInstances()->forAll(d|d=c or c.username <> d.username))] 
+     Department{ 
+        //fullAccess
+        // 1.
+        create
+        // 2.
+        update(employs)
+        // 3. 
+        update(name)
+        // 4.
         read(name)
-        read(surname)
-        read(username)
-        read(password)
-        read(belongs)
-        read(role)
+    }
+    Person{
+        // 1.
+        create
+        // 6. 
+        read(name), read(surname), read(username),
+        read(role), read(belongs), read(password)
+        // 9. + 10.
+        update(name) constrainedBy [self=caller or
+                                    self.name=null]
+        update(surname) constrainedBy [self=caller or
+                                        self.surname = null]
+        update(password) constrainedBy [self=caller or
+                                        (self.password = null and value = "default")]
+        update(username) constrainedBy [self <> caller]
+        update(role) constrainedBy [self.role = null and self <> caller]
+        // 2.
         update(belongs)
+
+        // from gtm
+        read(pastCourses), read(currCourses)
     }
     Course{
-        read(name)
-        read(maxCapacity)
-        update(maxCapacity) constrainedBy [value >= self.maxCapacity]
-        read(belongingTo)
-        read(professor)
-        read(staff)
-        read(currStudents)
-        read(pastStudents)
+        // 5. 
+        read(name), read(maxCapacity), read(belongingTo), read(professor),
+        read(staff), read(currStudents), read(pastStudents)
+        
+        update(maxCapacity) constrainedBy [value >= self.currStudents->size()]
+        
     }
-    Department{ 
-        create
-        read
-        update
-    }
+   
     FinalGrade{
-        read // final grades are only for past users, so this is fine i guess
+        // 5. + 7.
+        read
     }
     ProvisionalGrade{
+        // from gtm
+        read(course), read(student), read(value)
     }
     TeachRequest{
     }
-}
+} 
