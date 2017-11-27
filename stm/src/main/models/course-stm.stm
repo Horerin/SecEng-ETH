@@ -37,7 +37,6 @@ role STUDENT {
     
     FinalGrade{
         // 5. 
-        // not sure if we are allowed to see more than the grade
         read(value), read(student), read(course) constrainedBy [self.student = caller]
     }
     ProvisionalGrade{
