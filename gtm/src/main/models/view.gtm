@@ -1,0 +1,87 @@
+Window View{
+    Label Name_L{
+        String text := ['View Name:']
+    }
+    TextField Name_TF{
+        //TODO: view name to edit
+    }
+
+    Label Filters_L{
+        String text := ['Filters:']
+    }
+
+    Table Filters_T{
+        //TODO: Show all filters from the view
+        //NOTE: 'Role' below added for compilation purposes
+        //      replace it with the appropriate type
+        Set(Role) rows 
+        Role selected
+        columns {
+            ['Attribute'] : Label attr {
+                event onView (text){
+                    //TODO: show the attribute
+                }
+            }
+            ['Operator'] : Label op {
+                event onView (text){
+                    //TODO: show the operation
+                }
+            }
+            ['Parameter'] : Label param {
+                event onView (text){
+                    //TODO: show the parameter
+                }
+            }
+        }
+    }
+    Button Delete_B{
+        String text := ['Delete filter']
+        event onClick{
+            //TODO: Delete selected filter
+            notification(['Error'],['Not implemented'],[500])
+        }   
+    }
+    Label Add_L{
+        String text := ['Add filter:']
+    }
+    ComboBox Attribute_CB {
+        //TODO: show attributes
+        //NOTE: 'Role' below added for compilation purposes
+        //      replace it with the appropriate type
+        Set(Role) rows 
+        Role selected
+        Label attrs { 
+            event onView (text) {
+                //TODO: show attribute
+            }
+        }
+    }
+    ComboBox Op_CB {
+        //TODO: show operations
+        //NOTE: 'Role' below added for compilation purposes
+        //      replace it with the appropriate type
+        Set(Role) rows 
+        Role selected
+        Label ops { 
+            event onView (text) {
+                //TODO: show operation
+            }
+        }
+    }
+    TextField Param_TF {
+        String text := [null]
+    }   
+    Button Add_B {
+        String text := ['Add Filter']
+        event onClick{
+            //TODO: Add a new filter
+            notification(['Error'],['Not implemented'],[500])        
+        }   
+    }
+    Button Back_B{
+        String text := ['Back']
+        event onClick{
+            back
+        }
+    }
+}

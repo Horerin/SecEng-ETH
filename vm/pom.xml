@@ -9,7 +9,7 @@
 
     <artifactId>vm</artifactId>
     <packaging>war</packaging>
-    <name>CourseProject VM</name>
+    <name>CourseProjectExtension VM</name>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,7 +17,7 @@
         <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
         
         <jndi.jdbc>jdbc/CourseProject</jndi.jdbc>
-        <databasename>CourseProject</databasename>
+        <databasename>CourseProjectExtension</databasename>
     </properties>
     
     <dependencies>

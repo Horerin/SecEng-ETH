@@ -1,0 +1,92 @@
+Window Filter{
+
+    Table Table_T{
+        //TODO: show filtered courses
+        //NOTE: 'Role' below added for compilation purposes
+        //      replace it with the appropriate type
+        Set(Role) rows 
+        Role selected
+        columns {
+            ['Name'] : Label name {
+                event onView (text){
+                    //TODO: show the course name
+                }
+            }
+            ['Professor'] : Label prof {
+                event onView (text){
+                    //TODO: show the course professor's name and surname
+                }
+            }
+            ['Department'] : Label dept {
+                event onView (text){
+                    //TODO: show the course department
+                }
+            }
+            ['Current students no'] : Label students {
+                event onView (text){
+                    //TODO: show the current number of students in the course
+                }
+            }
+            ['Available student places'] : Label limit {
+                event onView (text){
+                    //TODO: show the current available student places in the course 
+                }
+            }
+            ['Current TA no'] : Label ta {
+                event onView (text){
+                    //TODO: show the current number of TAs in the course 
+                }
+            }
+            ['Available TA places'] : Label talimit {
+                event onView (text){
+                    //TODO: show the current available TA places in the course 
+                }
+            }
+        }
+    }
+    ComboBox View_CB {
+        //TODO: show existing views to choose from
+        //NOTE: 'Role' below added for compilation purposes
+        //      replace it with the appropriate type
+        Set(Role) rows 
+        Role selected
+        Label views { 
+            event onView (text) {
+                //TODO: show view
+            }
+        }
+    }
+    Button Apply_B{
+        String text := ['Apply view']
+        event onClick{
+            //TODO: filter the list of courses according to the selected view
+            notification(['Error'],['Not implemented'],[500])        
+        }
+    }
+    Button Edit_B{
+        String text := ['Edit View']
+        event onClick{
+            //TODO: open the View window to edit the selected view
+            notification(['Error'],['Not implemented'],[500])        
+        }
+    }
+    Label Name_L{
+        String text := ['View Name:']
+    }
+    TextField Name_TF{
+        String text := [null]
+    }
+    Button Create_B{
+        String text := ['Create View']
+        event onClick{
+            //TODO: create a view with a name from the TF above
+            notification(['Error'],['Not implemented'],[500])        
+        }
+    }
+    Button Back_B{
+        String text := ['Back']
+        event onClick{
+            back
+        }
+    }
+}

@@ -27,7 +27,14 @@ Window DepartmentListWindow {
             }
         }
     }
-    
+    //Button Delete_B {
+    //    String text:= ['Delete']
+    //    event onClick {
+    //        delete [$Table_T.selected$]
+    //        Table_T.rows := [null]
+    //        reevaluate Table_T.rows
+    //    }
+    //}
     Label Name_L {
         String text:= ['Name']
     }

@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html style="overflow: hidden; height: 100% ; width: 100% ;">
     <head>
-        <title>CourseListWindow</title>
+        <title>Filter</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link type="text/css" rel="stylesheet" href="styles.css">
         
@@ -19,38 +19,29 @@
     <body style="overflow: hidden; height: 100% ; width: 100% ;"  onload="Javascript:timedRefresh(5000);">
         <div class="v-app v-theme-ag v-app-ViewerApplication">
             <div class="v-view" >
-                <div class="v-csslayout CourseListWindow">
-                    <div class="v-panel Title_L v-panel-light light" style="overflow: hidden; width: 100% ;">
-                        <div class="v-captiontext">Title_L</div>
-                    </div>
+                <div class="v-csslayout Filter">
                     <div class="v-csslayout Table_T" style="background-color: white; border-width: 2px;border-color: black; border-style: dotted;">
                         <div style="margin-left: auto; margin-right: auto; width: 5em; font-size: large">Table_T</div>
                     </div>
-                    <button class="v-nativebutton View_B" type="button">
-                        <span class="v-nativebutton-caption">View_B</span>
+                    <div class="v-select View_CB">
+                        <select class="v-select-select" size="1">
+                            <option value="1" selected="selected">View_CB</option>
+                            <option value="2">Filter.View_CB</option>
+                            <option value="3">View_CB</option>
+                        </select>
+                    </div>
+                    <button class="v-nativebutton Apply_B" type="button">
+                        <span class="v-nativebutton-caption">Apply_B</span>
                     </button>
-                    <button class="v-nativebutton Enroll_B" type="button">
-                        <span class="v-nativebutton-caption">Enroll_B</span>
-                    </button>
-                    <button class="v-nativebutton TeachReq_B" type="button">
-                        <span class="v-nativebutton-caption">TeachReq_B</span>
-                    </button>
-                    <button class="v-nativebutton Delete_B" type="button">
-                        <span class="v-nativebutton-caption">Delete_B</span>
+                    <button class="v-nativebutton Edit_B" type="button">
+                        <span class="v-nativebutton-caption">Edit_B</span>
                     </button>
                     <div class="v-panel Name_L v-panel-light light" style="overflow: hidden; width: 100% ;">
                         <div class="v-captiontext">Name_L</div>
                     </div>
                     <input class="v-textfield Name_TF" type="text" value="Name_TF">
-                    <div class="v-panel Limit_L v-panel-light light" style="overflow: hidden; width: 100% ;">
-                        <div class="v-captiontext">Limit_L</div>
-                    </div>
-                    <input class="v-textfield Limit_TF" type="text" value="Limit_TF">
                     <button class="v-nativebutton Create_B" type="button">
                         <span class="v-nativebutton-caption">Create_B</span>
-                    </button>
-                    <button class="v-nativebutton Admin_B" type="button">
-                        <span class="v-nativebutton-caption">Admin_B</span>
                     </button>
                     <button class="v-nativebutton Back_B" type="button">
                         <span class="v-nativebutton-caption">Back_B</span>

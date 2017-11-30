@@ -94,7 +94,7 @@ Window CourseTWindow{
     
     Label TANum_L {
         String text := ['Staff number: '.concat($CourseTWindow.entity$.staff->size().toString()).concat(' (out of ').concat(($CourseTWindow.entity$.maxCapacity.div(20)+1).toString()).concat(')')]
-    }
+    }//change constant
     
     Table Table_TA_T{
         Set(Person) rows := [$CourseTWindow.entity$.staff]

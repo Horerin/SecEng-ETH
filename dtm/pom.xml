@@ -9,7 +9,7 @@
 
     <artifactId>dtm</artifactId>
     <packaging>ag-dtm</packaging>
-    <name>CourseProject-dtm</name>
+    <name>CourseProjectExtension-dtm</name>
     
     <build>
         <sourceDirectory>${project.basedir}/src/main/models</sourceDirectory>

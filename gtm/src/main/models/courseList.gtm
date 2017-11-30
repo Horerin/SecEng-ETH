@@ -59,6 +59,7 @@ Window CourseListWindow{
         event onClick {
             if [ (not $Table_T.selected$.oclIsUndefined())  ]{
                 if [ $CourseListWindow.caller$.role=Role::ADMIN ]{
+                    //some check
                     open CourseAWindow(caller:[$CourseListWindow.caller$], role:[$CourseListWindow.caller$.role], entity:[$Table_T.selected$])
                 } else {
                 if [ $CourseListWindow.caller$.role=Role::PROFESSOR ]{
@@ -78,6 +79,7 @@ Window CourseListWindow{
                     }
                 } else {
                 if [ $CourseListWindow.caller$.role=Role::STUDENT ]{
+                    //some check
                     open CourseSWindow(caller:[$CourseListWindow.caller$], role:[$CourseListWindow.caller$.role], entity:[$Table_T.selected$])
                 }}}}
             } else {
@@ -89,17 +91,22 @@ Window CourseListWindow{
         String text := ['Enroll']
         event onClick{
             if [ (not $Table_T.selected$.oclIsUndefined())  ]{
-                
+                //check if the student already enrolled
+                //if [$Table_T.selected$.currStudents.student->forAll(s|s<>$CourseListWindow.caller$) and
+                //    $Table_T.selected$.pastStudents.student->forAll(s|s<>$CourseListWindow.caller$)]{
                     try {
                         pgrade := new ProvisionalGrade
                         [$pgrade$.student] := [$CourseListWindow.caller$]
                         [$Table_T.selected$.currStudents]+=[$pgrade$]
                         [$CourseListWindow.caller$.currCourses]+=[$pgrade$]
+                        //[$pgrade$.course] := [$Table_T.selected$]
                         notification(['Success'],['You have enrolled'],[500])
                     } catch (SecurityException){
                         notification(['Error'],['Not allowed'],[500])
                     }
-               
+                //} else {
+                //    notification(['Error'],['You already took the course'],[500])
+                //}
             } else {
                 notification(['Error'],['Nothing selected'],[500])
             }
@@ -109,17 +116,22 @@ Window CourseListWindow{
         String text := ['Teach Request']
         event onClick{
             if [ (not $Table_T.selected$.oclIsUndefined())  ]{
-                
+                //if [$Table_T.selected$.taRequests.ta->forAll(s|s<>$CourseListWindow.caller$) and
+                //    $Table_T.selected$.staff->forAll(s|s<>$CourseListWindow.caller$)]{
                     try{
                         tre := new TeachRequest
                         [$tre$.ta]:=[$CourseListWindow.caller$]
                         [$tre$.course]:=[$Table_T.selected$]
-                        
+                        //[$Table_T.selected$.taRequests]+=[$tre$]
+                        //[$CourseListWindow.caller$.courseRequests]+=[$tre$]
+
                         notification(['Success'],['Teaching requested'],[500])
                     } catch (SecurityException){
                         notification(['Error'],['Not allowed'],[500])
                     }
-                
+                //} else {
+                //    notification(['Error'],['You already requested to teach the course'],[500])
+                //}
             } else {
                 notification(['Error'],['Nothing selected'],[500])
             }
@@ -145,7 +157,7 @@ Window CourseListWindow{
                     [$Table_T.selected$.belongingTo.offers]-=[$Table_T.selected$]
                     foreach st in [$Table_T.selected$.staff] {
                         [$st$.teaches]-=[$Table_T.selected$]
-                    }     
+                    }      
                     [$Table_T.selected$.professor.administers]-=[$Table_T.selected$]
                     delete [$Table_T.selected$]
                     Table_T.rows := [null]
@@ -201,6 +213,14 @@ Window CourseListWindow{
                 notification(['Error'],['The form contains errors.'],[500])
             }
         }
+    }
+    Button Admin_B{
+        String text := ['Filter courses']
+        event onClick{
+            //TODO: Open Filter window (only for an admin)
+            notification(['Error'],['Not implemented'],[500])
+        }
+        
     }
     Button Back_B{
         String text := ['Back']

@@ -9,7 +9,7 @@
 
     <artifactId>gtm</artifactId>
     <packaging>ag-gtm</packaging>
-    <name>CourseProject-gtm</name>
+    <name>CourseProjectExtension-gtm</name>
     
     <build>
         <sourceDirectory>${project.basedir}/src/main/models</sourceDirectory>

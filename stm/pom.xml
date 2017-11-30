@@ -9,7 +9,7 @@
 
     <artifactId>stm</artifactId>
     <packaging>ag-stm</packaging>
-    <name>CourseProject-stm</name>
+    <name>CourseProjectExtension-stm</name>
     
     <build>
         <sourceDirectory>${project.basedir}/src/main/models</sourceDirectory>

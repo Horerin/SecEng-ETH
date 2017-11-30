@@ -87,7 +87,10 @@ Window CoursePWindow{
                         [$grade$.course]:=[$pgrade$.course]
                         [$grade$.value]:=[$pgrade$.value]
                         [$grade$.student]:=[$pgrade$.student]
-                        
+                        //[$Table_Curr_T.selected$.currCourses]-=[$pgrade$]
+                        //[$Table_Curr_T.selected$.pastCourses]+=[$grade$]
+                        //[$CoursePWindow.entity$.currStudents]-=[$pgrade$]
+                        //[$CoursePWindow.entity$.pastStudents]+=[$grade$]
                         delete [$pgrade$]
                         Entityattr_L.text := [null]
                         reevaluate Entityattr_L.text
@@ -167,7 +170,8 @@ Window CoursePWindow{
     
     Label TANum_L {
         String text := ['Staff number: '.concat($CoursePWindow.entity$.staff->size().toString()).concat(' (out of ').concat(($CoursePWindow.entity$.maxCapacity.div(20)+1).toString()).concat(')')]
-    }
+    }//change constant
+    
     Table Table_ReqTA_T{
         Set(Person) rows := [$CoursePWindow.entity$.taRequests.ta->asSet()]
         Person selected := [null]
@@ -227,9 +231,11 @@ Window CoursePWindow{
                 try {
                     ta := [$Table_ReqTA_T.selected$]
                     tr := [$CoursePWindow.entity$.taRequests->any(tr|tr.ta=$ta$)]
-                    
+                    //[$ta$.courseRequests]-=[$tr$]
+                    //[$CoursePWindow.entity$.taRequests]-=[$tr$]
                     delete [$tr$]
                     [$CoursePWindow.entity$.staff]+=[$ta$]
+                    //[$ta$.teaches]+=[$CoursePWindow.entity$]
                     TANum_L.text := [null]
                     reevaluate TANum_L.text
                     Table_ReqTA_T.rows := [null]
@@ -255,7 +261,8 @@ Window CoursePWindow{
                 try {
                     rejta := [$Table_ReqTA_T.selected$]
                     req := [$CoursePWindow.entity$.taRequests->any(tr|tr.ta=$rejta$)]
-                  
+                    //[$rejta$.courseRequests]-=[$req$]
+                    //[$CoursePWindow.entity$.taRequests]-=[$req$]
                     delete [$req$]
                     TANum_L.text := [null]
                     reevaluate TANum_L.text

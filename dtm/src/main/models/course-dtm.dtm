@@ -59,3 +59,5 @@ enum Role{
     PROFESSOR
     ADMIN
 }
+
+//TODO: Add additional entities and enums here
