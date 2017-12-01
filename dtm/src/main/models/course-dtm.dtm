@@ -60,4 +60,39 @@ enum Role{
     ADMIN
 }
 
+//------------------------------------------------------------------------------
 //TODO: Add additional entities and enums here
+//------------------------------------------------------------------------------
+
+// ENUM of all possible filter operators
+enum FOperator {
+    EQ
+    NEQ
+    SM
+    SMQ
+    GT
+    GTQ
+}
+
+// ENUM of all possible attributes (of a course) a filter can filter on
+// (taken from "the 7 columns" in the project description
+enum FAttribute {
+    COURSENAME
+    PROFNAME
+    DEPTNAME
+    ATTENDINGSTUDS
+    MAXSTUDS
+    TEACHINGTAS
+    MAXTAS
+}
+
+entity View {
+    String name
+    Set(Filter) filters oppositeTo view
+}
+
+entity Filter {
+    FAttribute attribute
+    FOperator operator
+    String parameter
+}
