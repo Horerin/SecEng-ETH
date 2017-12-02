@@ -80,16 +80,13 @@ Window Filter{
         }
     }
     ComboBox View_CB {
-        //TODO: show existing views to choose from
-        //NOTE: 'Role' below added for compilation purposes
-        //      replace it with the appropriate type
+        //DONE: show existing views to choose from
         Set(View) rows := [View.allInstances()]
         View selected := [null]
         Label views { 
             event onView (text) {
                 text := [$View_CB.row$.name]
-                //open View(caller:[$Filter.caller$], role:[$Filter.caller$.role], entity:[$View_CB.selected$])
-                //TEST: show view
+                //DONE: show view
             }
         }
     }
@@ -103,8 +100,8 @@ Window Filter{
     Button Edit_B{
         String text := ['Edit View']
         event onClick{
-            //TODO: open the View window to edit the selected view
-            notification(['Error'],['Not implemented'],[500])        
+            //DONE: open the View window to edit the selected view
+            open View(caller:[$Filter.caller$], role:[$Filter.caller$.role], entity:[$View_CB.selected$])      
         }
     }
     Label Name_L{
