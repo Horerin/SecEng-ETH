@@ -4,42 +4,77 @@ Window Filter{
         //TODO: show filtered courses
         //NOTE: 'Role' below added for compilation purposes
         //      replace it with the appropriate type
-        Set(Role) rows 
-        Role selected
+        Set(Course) rows := [Course.allInstances()] //<- TODO (Lars) FILTER HERE
+        Course selected := [null]
         columns {
             ['Name'] : Label name {
                 event onView (text){
-                    //TODO: show the course name
+                    try{
+                        text := [$Table_T.row$.name]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                    //DONE: show the course name
                 }
             }
             ['Professor'] : Label prof {
                 event onView (text){
-                    //TODO: show the course professor's name and surname
+                    try{
+                        text := [$Table_T.row$.professor.name.concat(' ').concat($Table_T.row$.professor.surname)]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                    //DONE: show the course professor's name and surname
                 }
             }
             ['Department'] : Label dept {
                 event onView (text){
-                    //TODO: show the course department
+                    try{
+                        text := [$Table_T.row$.belongingTo.name]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                    //DONE: show the course department
                 }
             }
             ['Current students no'] : Label students {
                 event onView (text){
-                    //TODO: show the current number of students in the course
+                    try{
+                        text := [$Table_T.row$.currStudents->size().toString()]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                    //DONE: show the current number of students in the course
                 }
             }
             ['Available student places'] : Label limit {
                 event onView (text){
-                    //TODO: show the current available student places in the course 
+                    try{
+                        text := [($Table_T.row$.maxCapacity - $Table_T.row$.currStudents->size()).toString()]
+                    } catch (SecurityException){
+                        text := ['RESTRICTED']
+                    }
+                    //TEST: show the current available student places in the course 
                 }
             }
             ['Current TA no'] : Label ta {
                 event onView (text){
-                    //TODO: show the current number of TAs in the course 
+                    try{
+                        text := [($Table_T.row$.staff->size() - 1).toString()]  // -1 (Prof is included in Staff association)
+                    } catch (SecurityException) {
+                        text := ['RESTRICTED']
+                    }
+                    //TEST: show the current number of TAs in the course 
                 }
             }
             ['Available TA places'] : Label talimit {
                 event onView (text){
-                    //TODO: show the current available TA places in the course 
+                    try{
+                        text := [(($Table_T.row$.maxCapacity.div(20)) - ($Table_T.row$.staff->size() - 1)).toString()]  // -1 (Prof is included in Staff association)
+                    } catch (SecurityException) {
+                        text := ['RESTRICTED']
+                    }
+                    //TEST: show the current available TA places in the course 
                 }
             }
         }
@@ -79,6 +114,26 @@ Window Filter{
     Button Create_B{
         String text := ['Create View']
         event onClick{
+            if [(not $Name_TF.text$.oclIsUndefined())] {
+                try {
+                    if [View.allInstances()->forAll(v|v.name<>$Name_TF.text$)]{
+                        v := new View
+                        [$v$.name]:=[$Name_TF.text$]
+                        Table_T.rows := [null]
+                        reevaluate Table_T.rows
+                        
+                        Name_TF.text := [null]
+                    } else {
+                        notification(['Error'], ['View name already exists'],[500])
+                    }
+                } catch (SecurityException) {
+                    notification(['Error'],['Not allowed'],[500])
+                }
+            } else {
+                notification(['Error'], ['Please fill in a name for the view'], [500])
+            }
+
+
             //TODO: create a view with a name from the TF above
             notification(['Error'],['Not implemented'],[500])        
         }

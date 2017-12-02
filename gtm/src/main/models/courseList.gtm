@@ -219,7 +219,7 @@ Window CourseListWindow{
         event onClick{
             //DONE: Open Filter window (only for an admin)
             if [ $CourseListWindow.caller$.role=Role::ADMIN] {
-                open View(caller:[$CourseListWindow.caller$], role:[$CourseListWindow.caller$.role])
+                open Filter(caller:[$CourseListWindow.caller$], role:[$CourseListWindow.caller$.role])
             } else {
                 notification(['Error'],['Only ADMIN users are allowed to filter courses'],[500])
             }
