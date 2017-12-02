@@ -54,7 +54,7 @@ Window Filter{
                     } catch (SecurityException){
                         text := ['RESTRICTED']
                     }
-                    //TEST: show the current available student places in the course 
+                    //DONE: show the current available student places in the course 
                 }
             }
             ['Current TA no'] : Label ta {
@@ -64,7 +64,7 @@ Window Filter{
                     } catch (SecurityException) {
                         text := ['RESTRICTED']
                     }
-                    //TEST: show the current number of TAs in the course 
+                    //DONE: show the current number of TAs in the course 
                 }
             }
             ['Available TA places'] : Label talimit {
@@ -74,7 +74,7 @@ Window Filter{
                     } catch (SecurityException) {
                         text := ['RESTRICTED']
                     }
-                    //TEST: show the current available TA places in the course 
+                    //DONE: show the current available TA places in the course 
                 }
             }
         }
@@ -83,11 +83,13 @@ Window Filter{
         //TODO: show existing views to choose from
         //NOTE: 'Role' below added for compilation purposes
         //      replace it with the appropriate type
-        Set(Role) rows 
-        Role selected
+        Set(View) rows := [View.allInstances()]
+        View selected := [null]
         Label views { 
             event onView (text) {
-                //TODO: show view
+                text := [$View_CB.row$.name]
+                //open View(caller:[$Filter.caller$], role:[$Filter.caller$.role], entity:[$View_CB.selected$])
+                //TEST: show view
             }
         }
     }
@@ -119,8 +121,8 @@ Window Filter{
                     if [View.allInstances()->forAll(v|v.name<>$Name_TF.text$)]{
                         v := new View
                         [$v$.name]:=[$Name_TF.text$]
-                        Table_T.rows := [null]
-                        reevaluate Table_T.rows
+                        View_CB.rows := [null]
+                        reevaluate View_CB.rows
                         
                         Name_TF.text := [null]
                     } else {

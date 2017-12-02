@@ -1,4 +1,6 @@
 Window View{
+    View entity
+
     Label Name_L{
         String text := ['View Name:']
     }
