@@ -217,8 +217,12 @@ Window CourseListWindow{
     Button Admin_B{
         String text := ['Filter courses']
         event onClick{
-            //TODO: Open Filter window (only for an admin)
-            notification(['Error'],['Not implemented'],[500])
+            //DONE: Open Filter window (only for an admin)
+            if [ $CourseListWindow.caller$.role=Role::ADMIN] {
+                open View(caller:[$CourseListWindow.caller$], role:[$CourseListWindow.caller$.role])
+            } else {
+                notification(['Error'],['Only ADMIN users are allowed to filter courses'],[500])
+            }
         }
         
     }
