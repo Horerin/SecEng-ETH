@@ -76,50 +76,60 @@ Window View{
         }
     }
     ComboBox Op_CB {
-        //TEST: show operations -> TODO: filter on integer/string attribute!
-        Set(FOperator) rows  := [FOperator.allInstances()]
+        
+        Set(FOperator) rows  := [FOperator.allInstances()]          
         FOperator selected
         Label ops { 
-            event onView (text) {
-                text := [$Op_CB.row$.name()]
-                //TEST: show operation
+            event onView (text) {               
+                    text := [$Op_CB.row$.name()]                
+                //TEST: show operations
             }
         }
     }
     TextField Param_TF {
         String text := [null]
     }   
-    Button Add_B {  // TODO: association end with view to create!
+    Button Add_B {
         String text := ['Add Filter']
         event onClick{
             if[(not $Attribute_CB.selected$.oclIsUndefined())
                 and (not $Op_CB.selected$.oclIsUndefined())
-                and (not $Param_TF.text$.oclIsUndefined())] {
+                and (not ($Param_TF.text$ = null))] {
                  try {
-                        // Check if the filter already exists by checking attributeXoperatorXparameter
-                    if [Filter.allInstances()->forAll(f|(f.attribute <> $Attribute_CB.selected$)
-                            or (f.operator <> $Op_CB.selected$)
-                            or (f.parameter <> $Param_TF.text$))] {
-                                f := new Filter
-                                [$f$.attribute] := [$Attribute_CB.selected$]
-                                [$f$.operator] := [$Op_CB.selected$]
-                                [$f$.parameter] := [$Param_TF.text$]
+                    // check if AttributeXoperator is valid
+                    if [(($Attribute_CB.selected$ = FAttribute::COURSENAME) or
+                        ($Attribute_CB.selected$ = FAttribute::PROFNAME) or 
+                        ($Attribute_CB.selected$ = FAttribute::DEPTNAME)) and
+                         (($Op_CB.selected$ = FOperator::EQ) or
+                          ($Op_CB.selected$ = FOperator::NEQ))] {
+                    
+                            // Check if the filter already exists by checking attributeXoperatorXparameter
+                        if [Filter.allInstances()->forAll(f|(f.attribute <> $Attribute_CB.selected$)
+                                or (f.operator <> $Op_CB.selected$)
+                                or (f.parameter <> $Param_TF.text$))] {
+                                    f := new Filter
+                                    [$f$.attribute] := [$Attribute_CB.selected$]
+                                    [$f$.operator] := [$Op_CB.selected$]
+                                    [$f$.parameter] := [$Param_TF.text$]
 
-                                // Create association-ends
-                                [$View.entity$.filters] += [$f$]
-                                [$f$.view] := [$View.entity$]
+                                    // Create association-ends
+                                    [$View.entity$.filters] += [$f$]
+                                    [$f$.view] := [$View.entity$]
 
-                                notification(['Success'], ['Filter Created'], [500])
-                                
-                                Filters_T.rows := [null]
-                                reevaluate Filters_T.rows
-                                Attribute_CB.selected := [null]
-                                Op_CB.selected := [null]
-                                Param_TF.text := [null]
-                                
+                                    notification(['Success'], ['Filter Created'], [500])
+
+                                    Filters_T.rows := [null]
+                                    reevaluate Filters_T.rows
+                                    Attribute_CB.selected := [null]
+                                    Op_CB.selected := [null]
+                                    Param_TF.text := [null]
+
+                        } else {
+                            notification(['ERROR'], ['Filter already exists'], [500])
+                        }
                     } else {
-                        notification(['ERROR'], ['Filter already exists'], [500])
-                    }                 
+                        notification(['ERROR'], ['Selected operation not appropriate for selected attribute'], [500])
+                    }
                 } catch (SecurityException) {
                     notification(['ERROR'], ['Not allowed'], [500])
                 }

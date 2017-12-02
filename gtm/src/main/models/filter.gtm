@@ -101,7 +101,11 @@ Window Filter{
         String text := ['Edit View']
         event onClick{
             //DONE: open the View window to edit the selected view
-            open View(caller:[$Filter.caller$], role:[$Filter.caller$.role], entity:[$View_CB.selected$])      
+            if [not($View_CB.selected$.oclIsUndefined())] {
+                open View(caller:[$Filter.caller$], role:[$Filter.caller$.role], entity:[$View_CB.selected$]) 
+            } else {
+                notification(['ERROR'], ['Please select a View to edit'], [500])
+            }
         }
     }
     Label Name_L{
