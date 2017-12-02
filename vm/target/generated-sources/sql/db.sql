@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS CourseProject;
-USE CourseProject;
+CREATE DATABASE IF NOT EXISTS CourseProjectExtension;
+USE CourseProjectExtension;
 -- ----------------------------------------------------
 -- This table represents the class'Course'
 -- ----------------------------------------------------
@@ -69,6 +69,20 @@ CREATE table IF NOT EXISTS Course_belongingTo__Department_offers(
 CREATE table IF NOT EXISTS Department_employs__Person_belongs(
 	Department_employs INT NULL,
 	Person_belongs INT NULL
+) ENGINE=InnoDB;
+
+
+
+-- ----------------------------------------------------
+-- This table represents the class'Filter'
+-- ----------------------------------------------------
+CREATE table IF NOT EXISTS Filter(
+	pk INT NOT NULL auto_increment,
+	parameter text NULL,
+	attribute int NULL,
+	operator int NULL,
+	view int NULL,
+	primary key (pk)
 ) ENGINE=InnoDB;
 
 
@@ -155,6 +169,25 @@ CREATE table IF NOT EXISTS TeachRequest(
 	course int NULL,
 	ta int NULL,
 	primary key (pk)
+) ENGINE=InnoDB;
+
+
+
+-- ----------------------------------------------------
+-- This table represents the class'View'
+-- ----------------------------------------------------
+CREATE table IF NOT EXISTS View(
+	pk INT NOT NULL auto_increment,
+	name text NULL,
+	primary key (pk)
+) ENGINE=InnoDB;
+
+--
+-- This table represents the association 'View.filters'
+--
+CREATE table IF NOT EXISTS Filter_view__View_filters(
+	Filter_view INT NULL,
+	View_filters INT NULL
 ) ENGINE=InnoDB;
 
 

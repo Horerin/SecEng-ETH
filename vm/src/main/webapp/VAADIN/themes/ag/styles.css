@@ -1,19 +1,19 @@
 @import "../reindeer/legacy-styles.css";
 
-@import "DepartmentWindow.css";
 @import "CourseSWindow.css";
-@import "View.css";
-@import "InitWindow.css";
+@import "CourseListWindow.css";
 @import "CourseTWindow.css";
-@import "LoginWindow.css";
+@import "UserWindow.css";
+@import "DepartmentWindow.css";
 @import "CoursePWindow.css";
+@import "InitWindow.css";
 @import "MainWindow.css";
 @import "Filter.css";
-@import "UserListWindow.css";
+@import "View.css";
 @import "CourseAWindow.css";
-@import "CourseListWindow.css";
-@import "UserWindow.css";
+@import "LoginWindow.css";
 @import "DepartmentListWindow.css";
+@import "UserListWindow.css";
 
 /* The following rule is to avoid resizeable text fields */
 .v-textarea {
