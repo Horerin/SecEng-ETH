@@ -1,12 +1,12 @@
 Window View{
     View entity
-
+    // TODO?? @Michael: do we need to provide a way to edit the name of a filter? because there is no button to save changes...
     Label Name_L{
         String text := ['View Name:']
     }
     TextField Name_TF{
         String text := [$View.entity$.name]
-        //TEST: view name to edit
+        //DONE: view name to edit <<< (not editing button available)
     }
 
     Label Filters_L{
@@ -14,9 +14,7 @@ Window View{
     }
 
     Table Filters_T{
-        //TODO: Show all filters from the view
-        //NOTE: 'Role' below added for compilation purposes
-        //      replace it with the appropriate type
+        //DONE: Show all filters from the view
         Set(Filter) rows := [Filter.allInstances()]
         Filter selected := [null]
         columns {
@@ -43,7 +41,7 @@ Window View{
     Button Delete_B{
         String text := ['Delete filter']
         event onClick{
-            //TODO: Delete selected filter
+            //DONE: Delete selected filter
             if [(not $Filters_T.selected$.oclIsUndefined())]{
                 try {
                     [$Filters_T.selected$.view.filters] -= [$Filters_T.selected$]   // Remove association end View->Filter
@@ -65,7 +63,7 @@ Window View{
         String text := ['Add filter:']
     }
     ComboBox Attribute_CB {
-        //TEST: show attributes
+        //DONE: show attributes
         Set(FAttribute) rows := [FAttribute.allInstances()]
         FAttribute selected := [null]
         Label attrs { 
@@ -76,13 +74,13 @@ Window View{
         }
     }
     ComboBox Op_CB {
-        
+        //DONE: show operations
         Set(FOperator) rows  := [FOperator.allInstances()]          
         FOperator selected
         Label ops { 
             event onView (text) {               
                     text := [$Op_CB.row$.name()]                
-                //TEST: show operations
+                
             }
         }
     }
@@ -92,6 +90,7 @@ Window View{
     Button Add_B {
         String text := ['Add Filter']
         event onClick{
+        // DONE
             if[(not $Attribute_CB.selected$.oclIsUndefined())
                 and (not $Op_CB.selected$.oclIsUndefined())
                 and (not ($Param_TF.text$ = null))] {

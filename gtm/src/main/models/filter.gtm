@@ -85,8 +85,8 @@ Window Filter{
         View selected := [null]
         Label views { 
             event onView (text) {
-                text := [$View_CB.row$.name]
                 //DONE: show view
+                text := [$View_CB.row$.name]                
             }
         }
     }
@@ -117,6 +117,7 @@ Window Filter{
     Button Create_B{
         String text := ['Create View']
         event onClick{
+            //DONE: create a view with a name from the TF above
             if [(not $Name_TF.text$.oclIsUndefined())] {
                 try {
                     if [View.allInstances()->forAll(v|v.name<>$Name_TF.text$)]{
@@ -134,11 +135,7 @@ Window Filter{
                 }
             } else {
                 notification(['Error'], ['Please fill in a name for the view'], [500])
-            }
-
-
-            //TODO: create a view with a name from the TF above
-            notification(['Error'],['Not implemented'],[500])        
+            }    
         }
     }
     Button Back_B{
