@@ -15,7 +15,7 @@ Window View{
 
     Table Filters_T{
         //DONE: Show all filters from the view
-        Set(Filter) rows := [Filter.allInstances()]
+        Set(Filter) rows := [$View.entity$.filters]
         Filter selected := [null]
         columns {
             ['Attribute'] : Label attr {
@@ -111,14 +111,14 @@ Window View{
                         if [Filter.allInstances()->forAll(f|(f.attribute <> $Attribute_CB.selected$)
                                 or (f.operator <> $Op_CB.selected$)
                                 or (f.parameter <> $Param_TF.text$))] {
-                                    fi := new Filter
-                                    [$fi$.attribute] := [$Attribute_CB.selected$]
-                                    [$fi$.operator] := [$Op_CB.selected$]
-                                    [$fi$.parameter] := [$Param_TF.text$]
+                                    f := new Filter
+                                    [$f$.attribute] := [$Attribute_CB.selected$]
+                                    [$f$.operator] := [$Op_CB.selected$]
+                                    [$f$.parameter] := [$Param_TF.text$]
 
                                     // Create association-ends
-                                    [$View.entity$.filters] += [$fi$]
-                                    [$fi$.view] := [$View.entity$]
+                                    [$View.entity$.filters] += [$f$]
+                                    [$f$.view] := [$View.entity$]
 
                                     notification(['Success'], ['Filter Created'], [500])
 

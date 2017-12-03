@@ -118,14 +118,11 @@ Window Filter{
                         if[$f$.attribute = FAttribute::MAXSTUDS]{
                             attrInt := [$c$.maxCapacity]
                         }
-                        if[$f$.attribute = FAttribute::MAXSTUDS]{
-                            attrInt := [$c$.maxCapacity]
-                        }
                         if[$f$.attribute = FAttribute::TEACHINGTAS]{
                             attrInt := [$c$.staff->size() - 1]                                                        
                         }
                         if[$f$.attribute = FAttribute::MAXTAS]{
-                            attrInt := [($c$.maxCapacity->size().div(20)) - ($c$.staff->size() - 1)]                                                        
+                            attrInt := [($c$.maxCapacity.div(20)) - ($c$.staff->size() - 1)]                                                        
                         }
 
                         // APPLY FILTER BASED ON VAR TYPE
@@ -183,6 +180,7 @@ Window Filter{
                 }
                 Table_T.rows := [$resultCourses$]
                 resultCourses := [null]
+                notification(['INFO'], [('View "').concat($View_CB.selected$.name).concat('" applied')], [500])
             } else {
                 Table_T.rows := [Course.allInstances()]
                 notification(['INFO'], ['Applying the default View (no filters)'], [500])
