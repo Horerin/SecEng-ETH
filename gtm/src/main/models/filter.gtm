@@ -1,10 +1,8 @@
 Window Filter{
 
     Table Table_T{
-        //TODO: show filtered courses
-        //NOTE: 'Role' below added for compilation purposes
-        //      replace it with the appropriate type
-        Set(Course) rows := [Course.allInstances()] //<- TODO (Lars) FILTER HERE
+        //TEST/DONE: show filtered courses
+        Set(Course) rows := [Course.allInstances()]
         Course selected := [null]
         columns {
             ['Name'] : Label name {
@@ -92,11 +90,106 @@ Window Filter{
     }
     Button Apply_B{
         String text := ['Apply view']
+        Set (Course) resultCourses := [null]
+        
+        // Loop vars
+        String attrS := [null]
+        Integer attrInt := [null]
         event onClick{
-            //TODO: filter the list of courses according to the selected view
-            notification(['Error'],['Not implemented'],[500])        
+            //TEST/DONE: filter the list of courses according to the selected view
+            if [not($View_CB.selected$.oclIsUndefined())] {       
+                resultCourses := [Course.allInstances()]    // [$Table_T.rows$]    // Start with all courses and filter out per course
+                foreach f in [$View_CB.selected$.filters] { // Loop over the filters in the activated View
+                    foreach c in [$resultCourses$] {
+                        // 2 vars
+
+                        if [($f$.attribute = FAttribute::COURSENAME)] {
+                            attrS := [$c$.name]
+                        }
+                        if[$f$.attribute = FAttribute::PROFNAME]{
+                            attrS := [$c$.professor.name]
+                        }
+                        if[$f$.attribute = FAttribute::DEPTNAME] {
+                            attrS := [$c$.belongingTo.name]
+                        }
+                        if[$f$.attribute = FAttribute::ATTENDINGSTUDS]{
+                            attrInt := [$c$.currStudents->size()]
+                        }
+                        if[$f$.attribute = FAttribute::MAXSTUDS]{
+                            attrInt := [$c$.maxCapacity]
+                        }
+                        if[$f$.attribute = FAttribute::MAXSTUDS]{
+                            attrInt := [$c$.maxCapacity]
+                        }
+                        if[$f$.attribute = FAttribute::TEACHINGTAS]{
+                            attrInt := [$c$.staff->size() - 1]                                                        
+                        }
+                        if[$f$.attribute = FAttribute::MAXTAS]{
+                            attrInt := [($c$.maxCapacity->size().div(20)) - ($c$.staff->size() - 1)]                                                        
+                        }
+
+                        // APPLY FILTER BASED ON VAR TYPE
+                        // Int attribute:
+                        if [$attrS$.oclIsUndefined()]{
+                           // Dispatch on operator
+                            if[$f$.operator = FOperator::EQ]{
+                               if[$attrInt$ <> $f$.parameter.toInteger()]{
+                                    resultCourses := [$resultCourses$->excluding($c$)]   
+                               }
+                            }
+                            if[$f$.operator = FOperator::NEQ]{
+                                if[$attrInt$ = $f$.parameter.toInteger()]{
+                                    resultCourses := [$resultCourses$->excluding($c$)]   
+                               }
+                            }
+                            if[$f$.operator = FOperator::SM]{
+                               if[$attrInt$ >= $f$.parameter.toInteger()]{
+                                   resultCourses := [$resultCourses$->excluding($c$)]   
+                                }
+                            }
+                            if[$f$.operator = FOperator::SMQ]{
+                               if[$attrInt$ > $f$.parameter.toInteger()]{
+                                   resultCourses := [$resultCourses$->excluding($c$)]   
+                                }
+                            }
+                            if[$f$.operator = FOperator::GT]{
+                               if[$attrInt$ <= $f$.parameter.toInteger()]{
+                                   resultCourses := [$resultCourses$->excluding($c$)]   
+                                }
+                            }
+                            if[$f$.operator = FOperator::GTQ]{
+                               if[$attrInt$ < $f$.parameter.toInteger()]{
+                                   resultCourses := [$resultCourses$->excluding($c$)]   
+                                }
+                            }
+                        }
+                        // String attribute:
+                        if [$attrInt$.oclIsUndefined()]{
+                            if[$f$.operator = FOperator::EQ]{
+                               if[$attrS$ <> $f$.parameter]{
+                                    resultCourses := [$resultCourses$->excluding($c$)]   
+                               }
+                            }
+                            if[$f$.operator = FOperator::NEQ]{
+                                if[$attrS$ = $f$.parameter]{
+                                    resultCourses := [$resultCourses$->excluding($c$)]   
+                               }
+                            }                            
+                        }
+                        // Reset the loopvars
+                        attrS := [null]
+                        attrInt := [null]
+                    }
+                }
+                Table_T.rows := [$resultCourses$]
+                resultCourses := [null]
+            } else {
+                Table_T.rows := [Course.allInstances()]
+                notification(['INFO'], ['Applying the default View (no filters)'], [500])
+            }     
         }
     }
+
     Button Edit_B{
         String text := ['Edit View']
         event onClick{

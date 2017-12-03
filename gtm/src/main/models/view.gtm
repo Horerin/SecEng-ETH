@@ -95,25 +95,30 @@ Window View{
                 and (not $Op_CB.selected$.oclIsUndefined())
                 and (not ($Param_TF.text$ = null))] {
                  try {
-                    // check if AttributeXoperator is valid
-                    if [(($Attribute_CB.selected$ = FAttribute::COURSENAME) or
-                        ($Attribute_CB.selected$ = FAttribute::PROFNAME) or 
-                        ($Attribute_CB.selected$ = FAttribute::DEPTNAME)) and
+                    // check if AttributeXoperator is valid 
+                    // String attributes can only have EQ and NEQ as operator
+                    if [((($Attribute_CB.selected$ = FAttribute::COURSENAME) or
+                         ($Attribute_CB.selected$ = FAttribute::PROFNAME) or 
+                         ($Attribute_CB.selected$ = FAttribute::DEPTNAME)) and
                          (($Op_CB.selected$ = FOperator::EQ) or
-                          ($Op_CB.selected$ = FOperator::NEQ))] {
-                    
+                         ($Op_CB.selected$ = FOperator::NEQ))) or                    
+                        (($Attribute_CB.selected$ = FAttribute::ATTENDINGSTUDS) or 
+                            ($Attribute_CB.selected$ = FAttribute::MAXSTUDS) or 
+                            ($Attribute_CB.selected$ = FAttribute::TEACHINGTAS) or 
+                            ($Attribute_CB.selected$ = FAttribute::MAXTAS))]  // Int attributes can have any operator
+                    {
                             // Check if the filter already exists by checking attributeXoperatorXparameter
                         if [Filter.allInstances()->forAll(f|(f.attribute <> $Attribute_CB.selected$)
                                 or (f.operator <> $Op_CB.selected$)
                                 or (f.parameter <> $Param_TF.text$))] {
-                                    f := new Filter
-                                    [$f$.attribute] := [$Attribute_CB.selected$]
-                                    [$f$.operator] := [$Op_CB.selected$]
-                                    [$f$.parameter] := [$Param_TF.text$]
+                                    fi := new Filter
+                                    [$fi$.attribute] := [$Attribute_CB.selected$]
+                                    [$fi$.operator] := [$Op_CB.selected$]
+                                    [$fi$.parameter] := [$Param_TF.text$]
 
                                     // Create association-ends
-                                    [$View.entity$.filters] += [$f$]
-                                    [$f$.view] := [$View.entity$]
+                                    [$View.entity$.filters] += [$fi$]
+                                    [$fi$.view] := [$View.entity$]
 
                                     notification(['Success'], ['Filter Created'], [500])
 
