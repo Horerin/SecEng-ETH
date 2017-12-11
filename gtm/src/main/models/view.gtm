@@ -104,11 +104,10 @@ Window View{
         String text := ['Add Filter']
         event onClick{
         // DONE
-            if[($Param_TF.text$.toInteger().oclIsInvalid())] {
-                notification(['ERROR'], ['Input must be Integer!'], [500])
-            } else if[(not $Attribute_CB.selected$.oclIsUndefined())
-                and (not $Op_CB.selected$.oclIsUndefined())
-                and (not ($Param_TF.text$ = null))] {
+            if[(not $Attribute_CB.selected$.oclIsUndefined())
+            and (not $Op_CB.selected$.oclIsUndefined())
+            and (not ($Param_TF.text$ = null))
+            and (not $Param_TF.text$.toInteger().oclIsInvalid())] {
                  try {
                     // check if AttributeXoperator is valid 
                     // String attributes can only have EQ and NEQ as operator

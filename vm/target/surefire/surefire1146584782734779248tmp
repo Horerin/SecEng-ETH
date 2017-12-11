@@ -1,6 +1,0 @@
-#surefire
-#Sat Dec 02 18:29:45 CET 2017
-maven.ext.class.path=/home/actiongui/netbeans-8.0.2/java/maven-nblib/netbeans-eventspy.jar\:/home/actiongui/netbeans-8.0.2/java/maven-nblib/netbeans-cos.jar
-user.dir=/home/actiongui/NetBeansProjects/maven/uniorg/vm
-localRepository=/home/actiongui/.m2/repository
-basedir=/home/actiongui/NetBeansProjects/maven/uniorg/vm
