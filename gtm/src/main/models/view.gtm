@@ -8,6 +8,22 @@ Window View{
         String text := [$View.entity$.name]
         //DONE: view name to edit <<< (not editing button available)
     }
+    Button Update_name{
+        String text := ['Update']
+        event onClick{
+            //DONE: Delete selected filter
+            if [(not $Filters_T.selected$.oclIsUndefined())]{
+                try {
+                    [$Filters_T.selected$.view.name] := [$Name_TF.text$]
+                    notification(['Success'],['Name updated'],[500])
+                } catch (SecurityException){
+                    notification(['ERROR'], ['Not allowed'], [500])
+                }
+            } else {
+                notification(['ERROR'], ['Please select a filter to delete'], [500])
+            }
+        }   
+    }
 
     Label Filters_L{
         String text := ['Filters:']
