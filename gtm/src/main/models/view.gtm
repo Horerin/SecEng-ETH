@@ -94,8 +94,9 @@ Window View{
         Set(FOperator) rows  := [FOperator.allInstances()]          
         FOperator selected
         Label ops { 
-            event onView (text) {               
-                    text := [$Op_CB.row$.name()]                
+            event onView (text) {   
+                //if[$Op_CB.row$.name() = ['EQ']]
+                text := [$Op_CB.row$.name()]                
                 
             }
         }
@@ -107,7 +108,9 @@ Window View{
         String text := ['Add Filter']
         event onClick{
         // DONE
-            if[(not $Attribute_CB.selected$.oclIsUndefined())
+            if[$Param_TF.text$.toInteger().oclIsInvalid()]
+                notification(['ERROR'], ['Input must be Integer!'], [500])
+            else if[(not $Attribute_CB.selected$.oclIsUndefined())
                 and (not $Op_CB.selected$.oclIsUndefined())
                 and (not ($Param_TF.text$ = null))] {
                  try {
