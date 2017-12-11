@@ -11,17 +11,13 @@ Window View{
     Button Update_name{
         String text := ['Update']
         event onClick{
-            //DONE: Delete selected filter
-            if [(not $Filters_T.selected$.oclIsUndefined())]{
-                try {
-                    [$Filters_T.selected$.view.name] := [$Name_TF.text$]
-                    notification(['Success'],['Name updated'],[500])
-                } catch (SecurityException){
-                    notification(['ERROR'], ['Not allowed'], [500])
-                }
-            } else {
-                notification(['ERROR'], ['Please select a filter to delete'], [500])
+            try {
+                [$View.entity$.name] := [$Name_TF.text$]
+                notification(['Success'],['Name updated'],[500])
+            } catch (SecurityException){
+                notification(['ERROR'], ['Not allowed'], [500])
             }
+            
         }   
     }
 
@@ -108,7 +104,7 @@ Window View{
         String text := ['Add Filter']
         event onClick{
         // DONE
-            if[$Param_TF.text$.toInteger().oclIsInvalid()] {
+            if[($Param_TF.text$.toInteger().oclIsInvalid())] {
                 notification(['ERROR'], ['Input must be Integer!'], [500])
             } else if[(not $Attribute_CB.selected$.oclIsUndefined())
                 and (not $Op_CB.selected$.oclIsUndefined())
