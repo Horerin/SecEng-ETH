@@ -8,18 +8,6 @@ Window View{
         String text := [$View.entity$.name]
         //DONE: view name to edit <<< (not editing button available)
     }
-    Button Update_name{
-        String text := ['Update']
-        event onClick{
-            try {
-                [$View.entity$.name] := [$Name_TF.text$]
-                notification(['Success'],['Name updated'],[500])
-            } catch (SecurityException){
-                notification(['ERROR'], ['Not allowed'], [500])
-            }
-            
-        }   
-    }
 
     Label Filters_L{
         String text := ['Filters:']
@@ -106,8 +94,7 @@ Window View{
         // DONE
             if[(not $Attribute_CB.selected$.oclIsUndefined())
             and (not $Op_CB.selected$.oclIsUndefined())
-            and (not ($Param_TF.text$ = null))
-            and (not $Param_TF.text$.toInteger().oclIsInvalid())] {
+            and (not ($Param_TF.text$ = null))] {
                  try {
                     // check if AttributeXoperator is valid 
                     // String attributes can only have EQ and NEQ as operator
@@ -119,7 +106,8 @@ Window View{
                         (($Attribute_CB.selected$ = FAttribute::ATTENDINGSTUDS) or 
                             ($Attribute_CB.selected$ = FAttribute::MAXSTUDS) or 
                             ($Attribute_CB.selected$ = FAttribute::TEACHINGTAS) or 
-                            ($Attribute_CB.selected$ = FAttribute::MAXTAS))]  // Int attributes can have any operator
+                            ($Attribute_CB.selected$ = FAttribute::MAXTAS)) and
+                            (not $Param_TF.text$.toInteger().oclIsInvalid())]  // Int attributes can have any operator
                     {
                             // Check if the filter already exists by checking attributeXoperatorXparameter
                         if [Filter.allInstances()->forAll(f|(f.attribute <> $Attribute_CB.selected$)

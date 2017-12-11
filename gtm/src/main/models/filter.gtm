@@ -1,4 +1,5 @@
 Window Filter{
+    //String text
 
     Table Table_T{
         //TEST/DONE: show filtered courses
@@ -77,6 +78,7 @@ Window Filter{
             }
         }
     }
+
     ComboBox View_CB {
         //DONE: show existing views to choose from
         Set(View) rows := [View.allInstances()]
@@ -84,7 +86,7 @@ Window Filter{
         Label views { 
             event onView (text) {
                 //DONE: show view
-                text := [$View_CB.row$.name]                
+                text := [$View_CB.row$.name]  
             }
         }
     }
