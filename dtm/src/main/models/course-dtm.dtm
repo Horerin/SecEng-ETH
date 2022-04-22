@@ -75,8 +75,8 @@ enum FOperator {
 }
 
 // ENUM of all possible attributes (of a course) a filter can filter on
-// (taken from "the 7 columns" in the project description
-enum FAttribute {
+//  from "the 7 columns" in the project description
+enum Attribute {
     COURSENAME
     PROFNAME
     DEPTNAME
